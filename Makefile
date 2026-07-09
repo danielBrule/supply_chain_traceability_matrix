@@ -1,17 +1,28 @@
-.PHONY: setup venv install clean
+.PHONY: setup venv install init-db activate clean
 
 VENV := .venv
-PYTHON := python
+PYTHON := py
 VENV_PYTHON := $(VENV)/Scripts/python.exe
 
 setup: install
 
 venv:
-	$(PYTHON) -c "import pathlib, subprocess, sys; venv = pathlib.Path('$(VENV)'); subprocess.check_call([sys.executable, '-m', 'venv', str(venv)]) if not venv.exists() else None"
+	if not exist "$(VENV_PYTHON)" $(PYTHON) -m venv "$(VENV)"
 
 install: venv
-	$(VENV_PYTHON) -m pip install --upgrade pip
-	$(VENV_PYTHON) -m pip install -r requirements.txt
+	"$(VENV_PYTHON)" -m pip install --upgrade pip
+	"$(VENV_PYTHON)" -m pip install -r requirements.txt
+
+init-db: venv
+	"$(VENV_PYTHON)" -c "from src.db import init_db; init_db(); print('Database initialized at data/app.db')"
+
+activate: venv
+	@echo PowerShell may block Activate.ps1 by default.
+	@echo Run these commands in PowerShell to allow activation for this session only:
+	@echo Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+	@echo .\.venv\Scripts\Activate.ps1
+	@echo Or skip activation and run Python directly with:
+	@echo .\.venv\Scripts\python.exe
 
 clean:
 	$(PYTHON) -c "import pathlib, shutil; shutil.rmtree(pathlib.Path('$(VENV)'), ignore_errors=True)"

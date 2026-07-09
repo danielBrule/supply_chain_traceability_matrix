@@ -1,0 +1,88 @@
+sections:
+  - id: supply_chain_criticality
+    label: Supply chain criticality
+    questions:
+      - id: supplier_concentration
+        label: Supplier concentration
+        type: dropdown
+        required: true
+        options:
+          - label: Low
+            value: 1
+          - label: Medium
+            value: 3
+          - label: High
+            value: 5
+        contributes_to:
+          x: 0.4
+          y: 0.0
+          size: 0.2
+
+      - id: annual_spend
+        label: Annual spend
+        type: number
+        required: true
+        contributes_to:
+          x: 0.0
+          y: 0.0
+          size: 0.6
+
+      - id: replacement_difficulty
+        label: Replacement difficulty
+        type: dropdown
+        required: true
+        options:
+          - label: Easy
+            value: 1
+          - label: Moderate
+            value: 3
+          - label: Difficult
+            value: 5
+        contributes_to:
+          x: 0.3
+          y: 0.1
+          size: 0.2
+
+  - id: traceability_maturity
+    label: Traceability maturity
+    questions:
+      - id: supplier_data_quality
+        label: Supplier data quality
+        type: dropdown
+        required: true
+        options:
+          - label: Poor
+            value: 1
+          - label: Fair
+            value: 3
+          - label: Strong
+            value: 5
+        contributes_to:
+          x: 0.0
+          y: 0.4
+          size: 0.0
+
+      - id: traceability_coverage_percent
+        label: Traceability coverage percent
+        type: number
+        required: true
+        contributes_to:
+          x: 0.0
+          y: 0.4
+          size: 0.0
+
+      - id: audit_frequency
+        label: Audit frequency
+        type: dropdown
+        required: false
+        options:
+          - label: Rarely
+            value: 1
+          - label: Annually
+            value: 3
+          - label: Quarterly or better
+            value: 5
+        contributes_to:
+          x: 0.0
+          y: 0.2
+          size: 0.0
