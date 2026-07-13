@@ -1,3 +1,5 @@
+import pandas as pd
+import plotly.express as px
 import streamlit as st
 
 from src.db import (
@@ -11,7 +13,7 @@ from src.db import (
     save_answer,
     update_category,
 )
-from src.scoring import calculate_completion, load_questions
+from src.scoring import calculate_completion, calculate_scores, load_questions
 
 
 def required_answer_count(answers: dict, questions: dict) -> tuple[int, int]:
@@ -223,9 +225,84 @@ def render_assessment_page(
             st.rerun()
 
 
-def render_chart_page() -> None:
+def build_chart_rows(categories: list[dict], questions: dict) -> tuple[list[dict], list[dict]]:
+    chart_rows = []
+    incomplete_rows = []
+
+    for category in categories:
+        answers = get_answers(category["id"])
+        scores = calculate_scores(answers, questions)
+        answered, required = required_answer_count(answers, questions)
+
+        if scores["completion"] == "complete":
+            chart_rows.append(
+                {
+                    "category": category["name"],
+                    "description": category["description"],
+                    "x": scores["x"],
+                    "y": scores["y"],
+                    "size": scores["size"],
+                    "completion": scores["completion"],
+                }
+            )
+        else:
+            incomplete_rows.append(
+                {
+                    "category": category["name"],
+                    "completion": scores["completion"],
+                    "answered": answered,
+                    "required": required,
+                }
+            )
+
+    return chart_rows, incomplete_rows
+
+
+def render_chart_page(categories: list[dict], questions: dict) -> None:
     st.header("Matrix / Bubble chart")
-    st.info("Bubble chart will go here.")
+
+    chart_rows, incomplete_rows = build_chart_rows(categories, questions)
+    if not chart_rows:
+        st.info("No complete categories yet. Complete all required answers to show bubbles.")
+    else:
+        chart_data = pd.DataFrame(chart_rows)
+        fig = px.scatter(
+            chart_data,
+            x="x",
+            y="y",
+            size="size",
+            color="category",
+            hover_name="category",
+            hover_data={
+                "description": True,
+                "x": ":.2f",
+                "y": ":.2f",
+                "size": ":.2f",
+                "completion": False,
+            },
+            labels={
+                "x": "Supply chain criticality",
+                "y": "Traceability maturity",
+                "size": "Relative impact",
+                "category": "Product category",
+            },
+            size_max=60,
+        )
+        fig.update_layout(
+            height=620,
+            margin={"l": 20, "r": 20, "t": 30, "b": 20},
+            legend_title_text="Product category",
+        )
+        st.plotly_chart(fig, use_container_width=True)
+
+    if incomplete_rows:
+        st.subheader("Not shown on chart")
+        st.caption("Only categories with all required answers complete are plotted.")
+        st.dataframe(
+            pd.DataFrame(incomplete_rows),
+            use_container_width=True,
+            hide_index=True,
+        )
 
 
 def render_categories_admin_page() -> None:
@@ -324,6 +401,6 @@ render_navigation_sidebar()
 if page == "Assessment":
     render_assessment_page(selected_category_id, get_active_categories(), questions)
 elif page == "Matrix / Bubble chart":
-    render_chart_page()
+    render_chart_page(get_active_categories(), questions)
 elif page == "Categories admin":
     render_categories_admin_page()
