@@ -1,4 +1,4 @@
-.PHONY: setup venv install init-db activate clean
+.PHONY: setup venv install py_compile run init-db activate clean
 
 VENV := .venv
 PYTHON := py
@@ -12,6 +12,12 @@ venv:
 install: venv
 	"$(VENV_PYTHON)" -m pip install --upgrade pip
 	"$(VENV_PYTHON)" -m pip install -r requirements.txt
+
+py_compile: venv
+	"$(VENV_PYTHON)" -m py_compile app.py src/__init__.py src/db.py src/scoring.py
+
+run: py_compile
+	"$(VENV_PYTHON)" -m streamlit run app.py
 
 init-db: venv
 	"$(VENV_PYTHON)" -c "from src.db import init_db; init_db(); print('Database initialized at data/app.db')"
