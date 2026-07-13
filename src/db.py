@@ -99,6 +99,13 @@ def reactivate_category(category_id: int) -> None:
         )
 
 
+def delete_all_categories() -> None:
+    """Permanently delete all categories and answers."""
+    with _connect() as conn:
+        conn.execute("DELETE FROM answers")
+        conn.execute("DELETE FROM categories")
+
+
 def get_active_categories() -> list[dict[str, Any]]:
     """Return active categories ordered by name."""
     with _connect() as conn:

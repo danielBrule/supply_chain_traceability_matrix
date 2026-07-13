@@ -4,6 +4,7 @@ import streamlit as st
 
 from src.db import (
     create_category,
+    delete_all_categories,
     deactivate_category,
     get_active_categories,
     get_answers,
@@ -14,6 +15,55 @@ from src.db import (
     update_category,
 )
 from src.scoring import calculate_completion, calculate_scores, load_questions
+
+
+def apply_sidebar_styles() -> None:
+    st.markdown(
+        """
+        <style>
+        section[data-testid="stSidebar"] [data-testid="stButton"] button {
+            min-height: 2.35rem;
+        }
+
+        .status-dot {
+            display: inline-block;
+            width: 0.75rem;
+            height: 0.75rem;
+            margin-top: 0.8rem;
+            border-radius: 999px;
+            border: 1px solid rgba(255, 255, 255, 0.45);
+        }
+
+        .status-dot.not-started {
+            background-color: #ef4444;
+        }
+
+        .status-dot.partial {
+            background-color: #f59e0b;
+        }
+
+        .status-dot.complete {
+            background-color: #22c55e;
+        }
+
+        .status-dot.selected {
+            box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.25);
+        }
+
+        section[data-testid="stSidebar"] [data-testid="stSidebarUserContent"] > div {
+            display: flex;
+            flex-direction: column;
+            min-height: calc(100vh - 4rem);
+        }
+
+        section[data-testid="stSidebar"] [data-testid="stVerticalBlock"]:has(.sidebar-tools-marker) {
+            margin-top: auto;
+            padding-bottom: 1rem;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
 
 
 def required_answer_count(answers: dict, questions: dict) -> tuple[int, int]:
@@ -31,6 +81,20 @@ def required_answer_count(answers: dict, questions: dict) -> tuple[int, int]:
     return answered, len(required_questions)
 
 
+def total_answer_count(answers: dict, questions: dict) -> tuple[int, int]:
+    all_questions = [
+        question
+        for section in questions.get("sections", [])
+        for question in section.get("questions", [])
+    ]
+    answered = sum(
+        1
+        for question in all_questions
+        if answers.get(question["id"]) is not None and answers.get(question["id"]) != ""
+    )
+    return answered, len(all_questions)
+
+
 def completion_label(completion: str, answered: int, required: int) -> str:
     labels = {
         "complete": "Complete",
@@ -43,13 +107,41 @@ def completion_label(completion: str, answered: int, required: int) -> str:
 def category_sidebar_label(category: dict, questions: dict) -> str:
     answers = get_answers(category["id"])
     completion = calculate_completion(answers, questions)
-    answered, required = required_answer_count(answers, questions)
     status_labels = {
         "complete": "Complete",
         "partial": "Partial",
         "not_started": "Not started",
     }
-    return f"{category['name']} ({status_labels[completion]}, {answered}/{required})"
+    return f"{category['name']} - {status_labels[completion]}"
+
+
+def product_status_dot(completion: str, selected: bool) -> None:
+    selected_class = " selected" if selected else ""
+    st.markdown(
+        f"<span class='status-dot {completion.replace('_', '-')}{selected_class}'></span>",
+        unsafe_allow_html=True,
+    )
+
+
+def render_product_button(
+    category: dict,
+    questions: dict,
+    selected_category_id: int | None,
+) -> bool:
+    answers = get_answers(category["id"])
+    completion = calculate_completion(answers, questions)
+    status_label = category_sidebar_label(category, questions)
+    selected = category["id"] == selected_category_id
+    dot_col, button_col = st.sidebar.columns([0.12, 0.88])
+    with dot_col:
+        product_status_dot(completion, selected)
+    with button_col:
+        return st.button(
+            status_label,
+            key=f"select_product_{category['id']}",
+            type="primary" if selected else "secondary",
+            width="stretch",
+        )
 
 
 def ensure_selected_category_id(categories: list[dict]) -> int | None:
@@ -67,57 +159,23 @@ def ensure_selected_category_id(categories: list[dict]) -> int | None:
 
 
 def render_products_sidebar(categories: list[dict], questions: dict) -> int | None:
-    st.sidebar.subheader("Products")
+    st.sidebar.subheader("Product categories")
 
     selected_category_id = ensure_selected_category_id(categories)
     if not categories:
         st.sidebar.caption("No active products")
     else:
         for category in categories:
-            product_col, menu_col = st.sidebar.columns([0.58, 0.42])
-            label = category_sidebar_label(category, questions)
-            if category["id"] == selected_category_id:
-                label = f"Selected - {label}"
+            product_clicked = render_product_button(
+                category,
+                questions,
+                selected_category_id,
+            )
 
-            if product_col.button(
-                label,
-                key=f"select_product_{category['id']}",
-                use_container_width=True,
-            ):
+            if product_clicked:
                 st.session_state.selected_category_id = category["id"]
                 st.session_state.page = "Assessment"
                 st.rerun()
-
-            with menu_col.popover("...", use_container_width=True):
-                with st.form(f"sidebar_edit_category_{category['id']}"):
-                    updated_name = st.text_input(
-                        "Name",
-                        value=category["name"],
-                        key=f"sidebar_name_{category['id']}",
-                    )
-                    updated_description = st.text_area(
-                        "Description",
-                        value=category["description"],
-                        height=90,
-                        key=f"sidebar_description_{category['id']}",
-                    )
-
-                    if st.form_submit_button("Save"):
-                        if not updated_name.strip():
-                            st.warning("Category name is required.")
-                        else:
-                            update_category(
-                                category["id"],
-                                updated_name,
-                                updated_description,
-                            )
-                            st.rerun()
-
-                if st.button("Deactivate", key=f"sidebar_deactivate_{category['id']}"):
-                    deactivate_category(category["id"])
-                    if st.session_state.get("selected_category_id") == category["id"]:
-                        st.session_state.pop("selected_category_id", None)
-                    st.rerun()
 
     with st.sidebar.popover("+ Add category"):
         with st.form("sidebar_create_category_form", clear_on_submit=True):
@@ -140,23 +198,26 @@ def render_products_sidebar(categories: list[dict], questions: dict) -> int | No
     return ensure_selected_category_id(get_active_categories())
 
 
-def render_matrix_sidebar() -> None:
-    st.sidebar.subheader("Matrix")
-    if st.sidebar.button("Bubble chart", use_container_width=True):
-        st.session_state.page = "Matrix / Bubble chart"
-        st.rerun()
+def render_tools_sidebar() -> None:
+    with st.sidebar.container():
+        st.markdown("<span class='sidebar-tools-marker'></span>", unsafe_allow_html=True)
+        st.subheader("Tools")
 
+        if st.button(
+            "Matrix",
+            type="primary" if st.session_state.get("page") == "Matrix / Bubble chart" else "secondary",
+            width="stretch",
+        ):
+            st.session_state.page = "Matrix / Bubble chart"
+            st.rerun()
 
-def render_navigation_sidebar() -> None:
-    st.sidebar.subheader("Navigation")
-    admin_label = "Selected - Categories admin"
-
-    if st.session_state.get("page") != "Categories admin":
-        admin_label = "Categories admin"
-
-    if st.sidebar.button(admin_label, use_container_width=True):
-        st.session_state.page = "Categories admin"
-        st.rerun()
+        if st.button(
+            "Admin",
+            type="primary" if st.session_state.get("page") == "Categories admin" else "secondary",
+            width="stretch",
+        ):
+            st.session_state.page = "Categories admin"
+            st.rerun()
 
 
 def render_assessment_page(
@@ -164,9 +225,8 @@ def render_assessment_page(
     categories: list[dict],
     questions: dict,
 ) -> None:
-    st.header("Assessment")
-
     if selected_category_id is None:
+        st.header("Assessment")
         st.info("Add a category before starting an assessment.")
         return
 
@@ -176,9 +236,9 @@ def render_assessment_page(
     completion = calculate_completion(answers, questions)
     answered, required = required_answer_count(answers, questions)
 
-    st.subheader(selected_category["name"])
+    st.title(selected_category["name"])
     if selected_category["description"]:
-        st.caption(selected_category["description"])
+        st.write(selected_category["description"])
     st.caption(completion_label(completion, answered, required))
 
     with st.form(f"assessment_{selected_category['id']}"):
@@ -223,6 +283,41 @@ def render_assessment_page(
                 )
             st.success(f"Saved assessment for {selected_category['name']}.")
             st.rerun()
+
+    st.divider()
+    edit_key = f"edit_selected_category_{selected_category['id']}"
+    edit_col, delete_col = st.columns([0.22, 0.78])
+    if edit_col.button("Edit category details", key=f"toggle_{edit_key}"):
+        st.session_state[edit_key] = not st.session_state.get(edit_key, False)
+
+    if delete_col.button(
+        "Deactivate category",
+        key=f"deactivate_selected_category_{selected_category['id']}",
+    ):
+        deactivate_category(selected_category["id"])
+        st.session_state.pop("selected_category_id", None)
+        st.rerun()
+
+    if st.session_state.get(edit_key, False):
+        with st.form(f"selected_category_details_{selected_category['id']}"):
+            updated_name = st.text_input("Category name", value=selected_category["name"])
+            updated_description = st.text_area(
+                "Category description",
+                value=selected_category["description"],
+                height=90,
+            )
+            if st.form_submit_button("Save category details"):
+                if not updated_name.strip():
+                    st.warning("Category name is required.")
+                else:
+                    update_category(
+                        selected_category["id"],
+                        updated_name,
+                        updated_description,
+                    )
+                    st.session_state[edit_key] = False
+                    st.success("Category details updated.")
+                    st.rerun()
 
 
 def build_chart_rows(categories: list[dict], questions: dict) -> tuple[list[dict], list[dict]]:
@@ -293,20 +388,20 @@ def render_chart_page(categories: list[dict], questions: dict) -> None:
             margin={"l": 20, "r": 20, "t": 30, "b": 20},
             legend_title_text="Product category",
         )
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, width="stretch")
 
     if incomplete_rows:
         st.subheader("Not shown on chart")
         st.caption("Only categories with all required answers complete are plotted.")
         st.dataframe(
             pd.DataFrame(incomplete_rows),
-            use_container_width=True,
+            width="stretch",
             hide_index=True,
         )
 
 
-def render_categories_admin_page() -> None:
-    st.header("Categories admin")
+def render_categories_admin_page(questions: dict) -> None:
+    st.header("Admin")
 
     categories = get_active_categories()
     inactive_categories = get_inactive_categories()
@@ -319,6 +414,9 @@ def render_categories_admin_page() -> None:
             with st.expander(category["name"]):
                 if category["description"]:
                     st.write(category["description"])
+                answers = get_answers(category["id"])
+                answered, total = total_answer_count(answers, questions)
+                st.caption(f"Progress {answered} / {total} questions answered")
                 st.caption(f"Last updated {category['updated_at']}")
 
     st.divider()
@@ -332,15 +430,35 @@ def render_categories_admin_page() -> None:
                 st.write(category["name"])
                 if category["description"]:
                     st.caption(category["description"])
+                answers = get_answers(category["id"])
+                answered, total = total_answer_count(answers, questions)
+                st.caption(f"Progress {answered} / {total} questions answered")
                 st.caption(f"Last updated {category['updated_at']}")
             if action_col.button(
                 "Add back",
                 key=f"reactivate_category_{category['id']}",
-                use_container_width=True,
+                width="stretch",
             ):
                 reactivate_category(category["id"])
                 st.session_state.selected_category_id = category["id"]
                 st.session_state.page = "Assessment"
+                st.rerun()
+
+    st.divider()
+    st.subheader("Danger zone")
+    st.warning("This permanently deletes all products and all saved answers.")
+    with st.form("delete_all_products_form"):
+        confirmation = st.text_input("Type DELETE to confirm")
+        delete_submitted = st.form_submit_button("Delete all products permanently")
+
+        if delete_submitted:
+            if confirmation != "DELETE":
+                st.warning("Type DELETE exactly to confirm.")
+            else:
+                delete_all_categories()
+                st.session_state.pop("selected_category_id", None)
+                st.session_state.page = "Assessment"
+                st.success("All products and answers were permanently deleted.")
                 st.rerun()
 
 
@@ -381,26 +499,22 @@ st.set_page_config(
     layout="wide",
 )
 
+apply_sidebar_styles()
 init_db()
 questions = load_questions()
 categories = get_active_categories()
 
-st.title("Supply Chain Traceability Matrix")
-
-selected_category_id = render_products_sidebar(categories, questions)
-st.sidebar.divider()
-render_matrix_sidebar()
-st.sidebar.divider()
-
 if "page" not in st.session_state:
     st.session_state.page = "Assessment"
 
+selected_category_id = render_products_sidebar(categories, questions)
+render_tools_sidebar()
+
 page = st.session_state.page
-render_navigation_sidebar()
 
 if page == "Assessment":
     render_assessment_page(selected_category_id, get_active_categories(), questions)
 elif page == "Matrix / Bubble chart":
     render_chart_page(get_active_categories(), questions)
 elif page == "Categories admin":
-    render_categories_admin_page()
+    render_categories_admin_page(questions)
