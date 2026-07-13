@@ -86,6 +86,19 @@ def deactivate_category(category_id: int) -> None:
         )
 
 
+def reactivate_category(category_id: int) -> None:
+    """Restore an inactive category."""
+    with _connect() as conn:
+        conn.execute(
+            """
+            UPDATE categories
+            SET is_active = 1, updated_at = ?
+            WHERE id = ?
+            """,
+            (_now(), category_id),
+        )
+
+
 def get_active_categories() -> list[dict[str, Any]]:
     """Return active categories ordered by name."""
     with _connect() as conn:
@@ -94,6 +107,21 @@ def get_active_categories() -> list[dict[str, Any]]:
             SELECT id, name, description, is_active, created_at, updated_at
             FROM categories
             WHERE is_active = 1
+            ORDER BY name COLLATE NOCASE
+            """
+        ).fetchall()
+
+    return [_row_to_dict(row) for row in rows]
+
+
+def get_inactive_categories() -> list[dict[str, Any]]:
+    """Return inactive categories ordered by name."""
+    with _connect() as conn:
+        rows = conn.execute(
+            """
+            SELECT id, name, description, is_active, created_at, updated_at
+            FROM categories
+            WHERE is_active = 0
             ORDER BY name COLLATE NOCASE
             """
         ).fetchall()
