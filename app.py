@@ -439,7 +439,10 @@ def render_chart_page(categories: list[dict], questions: dict) -> None:
             margin={"l": 20, "r": 20, "t": 30, "b": 20},
             legend_title_text="Famille de produit",
         )
+        add_matrix_quadrants(fig)
         st.plotly_chart(fig, width="stretch")
+
+    render_quadrant_methodology()
 
     if incomplete_rows:
         st.subheader("Non affichees sur la matrice")
@@ -454,6 +457,173 @@ def render_chart_page(categories: list[dict], questions: dict) -> None:
 def get_selected_scenario(questions: dict) -> dict:
     scenario_id = get_setting("scenario_id")
     return get_scenario_by_id(questions, scenario_id)
+
+
+def render_quadrant_methodology() -> None:
+    st.subheader("Lecture des quadrants")
+
+    quadrants = [
+        {
+            "title": "Levier, l'actif stratégique",
+            "subtitle": "Criticité haute, valeur haute",
+            "body": [
+                "Dans ce quadrant, l'obligation et l'opportunité coïncident : la traçabilité est exigée par la réglementation, un client ou la nature du produit, mais permet aussi de créer une famille de produits premium, résiliente, engageante pour le client ou intégrant la circularité.",
+                "La recommandation est d'investir pleinement, au-delà du minimum réglementaire, et de faire de la traçabilité un argument. La dépense qui existerait de toute façon au titre de la conformité peut être convertie en avantage concurrentiel.",
+                "La taille de la bulle donne l'étalement dans le temps : une petite bulle représente un quick win par lequel commencer, une très grande bulle impose de phaser l'investissement. Dans ce quadrant, le coût ne fait pas renoncer, il fait prioriser.",
+            ],
+        },
+        {
+            "title": "Obligatoire, le ticket d'entrée",
+            "subtitle": "Criticité haute, valeur basse",
+            "body": [
+                "Dans ce quadrant, la nécessité seule justifie la mise en place de la traçabilité. Aucune création de valeur n'a été identifiée au scoring : la mise en conformité vise à éviter une sanction ou à ne pas être exclu d'un marché.",
+                "La recommandation est de tracer par nécessité et de minimiser le coût total, en calant la granularité sur l'exigence réglementaire ou contractuelle, pas davantage.",
+                "La taille de la bulle a une fonction d'alerte : puisque la dépense n'a pas de retour direct en face, chaque euro doit être challengé. Une grande bulle en Obligatoire signale une famille où il faut réutiliser l'existant, adopter des standards ou mutualiser.",
+            ],
+        },
+        {
+            "title": "Dormante, l'opportunité de croissance",
+            "subtitle": "Criticité basse, valeur haute",
+            "body": [
+                "Dans ce quadrant, il n'y a pas de caractère obligatoire, mais le scoring identifie une opportunité : premium possible, clientèle sensible à la traçabilité, avantage de résilience ou modèle d'affaires émergent.",
+                "La recommandation est d'explorer par pilote ciblé et de prouver la valeur avant de lancer une mise en œuvre large. Le pilote doit être cadré sur une famille ou un marché avec des objectifs précis.",
+                "La taille de la bulle aide à décider du moment d'agir : une petite bulle peut justifier un pilote rapide ; une grande bulle appelle plutôt un déclencheur clair, comme une évolution réglementaire annoncée ou un signal client fort.",
+            ],
+        },
+        {
+            "title": "Accessoire, le coût évitable",
+            "subtitle": "Criticité basse, valeur basse",
+            "body": [
+                "Dans ce quadrant, il n'y a ni devoir de traçabilité ni opportunité identifiée. L'absence de traçabilité de ces familles ne présente pas de risque significatif.",
+                "La recommandation est de ne rien engager, au-delà d'une veille minimale. Savoir ne pas investir est une décision à part entière : chaque euro non dépensé ici finance un Levier ou un pilote en Dormante.",
+                "Ici, la bulle ne change pas la décision : quelle que soit sa taille, on n'engage pas. Une petite bulle indique seulement que l'investissement serait faible, pas qu'il serait pertinent.",
+            ],
+        },
+    ]
+
+    for quadrant in quadrants:
+        with st.expander(f"{quadrant['title']} ({quadrant['subtitle']})"):
+            for paragraph in quadrant["body"]:
+                st.write(paragraph)
+
+    with st.expander("Rôle du coût et cas particulier RSE"):
+        st.write(
+            "La direction stratégique relève d'abord des deux axes, avec en majeure la valeur stratégique. "
+            "Le coût règle la temporalité, le rythme et l'ordre de passage : c'est une troisième dimension, "
+            "pas un troisième axe."
+        )
+        st.write(
+            "Les familles à enjeu RSE apparaissent principalement en Obligatoire lorsque la réglementation "
+            "impose déjà la traçabilité, ou en Dormante lorsqu'aucune obligation n'existe encore mais qu'une "
+            "valeur potentielle est identifiée. Cela permet d'anticiper les bascules réglementaires et de "
+            "transformer certaines familles en Levier."
+        )
+
+
+def add_matrix_quadrants(fig) -> None:
+    quadrant_styles = [
+        {
+            "name": "Accessoire, le coût évitable",
+            "x0": 0,
+            "x1": 5,
+            "y0": 0,
+            "y1": 5,
+            "fillcolor": "rgba(148, 163, 184, 0.12)",
+            "label_x": 2.5,
+            "label_y": 0.35,
+        },
+        {
+            "name": "Obligatoire, le ticket d'entrée",
+            "x0": 5,
+            "x1": 10,
+            "y0": 0,
+            "y1": 5,
+            "fillcolor": "rgba(239, 68, 68, 0.10)",
+            "label_x": 7.5,
+            "label_y": 0.35,
+        },
+        {
+            "name": "Dormante, l'opportunité de croissance",
+            "x0": 0,
+            "x1": 5,
+            "y0": 5,
+            "y1": 10,
+            "fillcolor": "rgba(245, 158, 11, 0.10)",
+            "label_x": 2.5,
+            "label_y": 9.65,
+        },
+        {
+            "name": "Levier, l'actif stratégique",
+            "x0": 5,
+            "x1": 10,
+            "y0": 5,
+            "y1": 10,
+            "fillcolor": "rgba(34, 197, 94, 0.10)",
+            "label_x": 7.5,
+            "label_y": 9.65,
+        },
+    ]
+
+    shapes = [
+        {
+            "type": "rect",
+            "xref": "x",
+            "yref": "y",
+            "x0": quadrant["x0"],
+            "x1": quadrant["x1"],
+            "y0": quadrant["y0"],
+            "y1": quadrant["y1"],
+            "fillcolor": quadrant["fillcolor"],
+            "line": {"color": "rgba(148, 163, 184, 0.35)", "width": 1},
+            "layer": "below",
+        }
+        for quadrant in quadrant_styles
+    ]
+    shapes.extend(
+        [
+            {
+                "type": "line",
+                "xref": "x",
+                "yref": "y",
+                "x0": 5,
+                "x1": 5,
+                "y0": 0,
+                "y1": 10,
+                "line": {"color": "rgba(148, 163, 184, 0.75)", "width": 1, "dash": "dash"},
+            },
+            {
+                "type": "line",
+                "xref": "x",
+                "yref": "y",
+                "x0": 0,
+                "x1": 10,
+                "y0": 5,
+                "y1": 5,
+                "line": {"color": "rgba(148, 163, 184, 0.75)", "width": 1, "dash": "dash"},
+            },
+        ]
+    )
+
+    annotations = [
+        {
+            "x": quadrant["label_x"],
+            "y": quadrant["label_y"],
+            "xref": "x",
+            "yref": "y",
+            "text": quadrant["name"],
+            "showarrow": False,
+            "font": {"size": 13, "color": "rgba(226, 232, 240, 0.86)"},
+            "align": "center",
+            "bgcolor": "rgba(15, 23, 42, 0.50)",
+            "bordercolor": "rgba(148, 163, 184, 0.35)",
+            "borderpad": 4,
+        }
+        for quadrant in quadrant_styles
+    ]
+
+    fig.update_layout(shapes=shapes, annotations=annotations)
+    fig.update_xaxes(range=[0, 10], zeroline=False)
+    fig.update_yaxes(range=[0, 10], zeroline=False)
 
 
 def render_categories_admin_page(questions: dict) -> None:
