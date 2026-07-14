@@ -4,7 +4,8 @@ sections:
   questions:
   - id: c1_obligation_reglementaire_contractuelle
     label: C1 - Obligation reglementaire et contractuelle
-    description: A quel point tracer cette famille est-il un devoir, impose par la loi ou par un client ?
+    description: A quel point tracer cette famille est-il un devoir, impose par la
+      loi ou par un client ?
     type: dropdown
     required: true
     options:
@@ -22,41 +23,51 @@ sections:
       description: 'Obligation claire : reglementation sectorielle applicable ou exigence
         contractuelle d''un client pesant une part notable du chiffre d''affaires'
       value: 7
-    - label: 'Obligation imperative : tracabilite legalement exigee ou condition contractuelle
-        d''acces au marche'
-      description: 'Obligation imperative : tracabilite legalement exigee ou condition
-        contractuelle d''acces au marche'
-      value: 10
+    - label: 'Obligation imperative : tracabilite legalement exigee (securite, sante,
+        materiaux critiques) ou condition contractuelle d''acces au marche. Une note
+        >= 9 declenche le plancher de criticite de 7/10'
+      description: 'Obligation imperative : tracabilite legalement exigee (securite,
+        sante, materiaux critiques) ou condition contractuelle d''acces au marche.
+        Une note >= 9 declenche le plancher de criticite de 7/10'
+      value: 9.5
     contributes_to:
       x: 0.25
       y: 0.0
       size: 0.0
   - id: c2_risque_sanitaire_securite
     label: C2 - Risque sanitaire / securite
-    description: Quelle serait la gravite du prejudice aux personnes si un lot defectueux ne pouvait etre identifie et retire a temps ?
+    description: Quelle serait la gravite du prejudice aux personnes si un lot defectueux
+      ne pouvait etre identifie et retire a temps ?
     type: dropdown
     required: true
     options:
-    - label: 'Negligeable : le produit ne presente aucun danger d''usage'
-      description: 'Negligeable : le produit ne presente aucun danger d''usage'
+    - label: 'Negligeable : le produit ne presente aucun danger d''usage (consommable
+        de bureau)'
+      description: 'Negligeable : le produit ne presente aucun danger d''usage (consommable
+        de bureau)'
       value: 1
     - label: 'Limite : inconfort ou dommage materiel mineur, sans atteinte aux personnes'
       description: 'Limite : inconfort ou dommage materiel mineur, sans atteinte aux
         personnes'
       value: 4
-    - label: 'Serieux : atteinte possible a la sante ou a la securite'
-      description: 'Serieux : atteinte possible a la sante ou a la securite'
+    - label: 'Serieux : atteinte possible a la sante ou a la securite (allergene non
+        declare, composant electrique defaillant)'
+      description: 'Serieux : atteinte possible a la sante ou a la securite (allergene
+        non declare, composant electrique defaillant)'
       value: 7
-    - label: 'Vital : mise en danger de la vie'
-      description: 'Vital : mise en danger de la vie'
-      value: 10
+    - label: 'Vital : mise en danger de la vie (principe actif pharmaceutique, piece
+        de structure aeronautique, contamination alimentaire)'
+      description: 'Vital : mise en danger de la vie (principe actif pharmaceutique,
+        piece de structure aeronautique, contamination alimentaire)'
+      value: 9.5
     contributes_to:
       x: 0.25
       y: 0.0
       size: 0.0
   - id: c3_exposition_incident
     label: C3 - Exposition en cas d'incident
-    description: Que couterait a l'entreprise un incident non maitrise en probabilite et en ampleur ?
+    description: Que couterait a l'entreprise un incident non maitrise en probabilite
+      et en ampleur (rappel, sanction, scandale) ?
     type: dropdown
     required: true
     options:
@@ -75,18 +86,19 @@ sections:
       description: 'Forte : rappel massif ou sanction plausible, marque connue, couverture
         mediatique probable'
       value: 7
-    - label: 'Maximale : marque grand public tres visible, sujet sensible, reputation
-        durablement exposee'
-      description: 'Maximale : marque grand public tres visible, sujet sensible, reputation
-        durablement exposee'
-      value: 10
+    - label: 'Maximale : marque grand public tres visible, sujet sensible (enfants,
+        ethique), un incident serait mediatise et marquerait durablement la reputation'
+      description: 'Maximale : marque grand public tres visible, sujet sensible (enfants,
+        ethique), un incident serait mediatise et marquerait durablement la reputation'
+      value: 9.5
     contributes_to:
       x: 0.25
       y: 0.0
       size: 0.0
   - id: c4_risque_operationnel_continuite
     label: C4 - Risque operationnel / continuite
-    description: L'incapacite a localiser un produit dans la chaine peut-elle interrompre l'activite ?
+    description: L'incapacite a localiser un produit dans la chaine peut-elle interrompre
+      l'activite ?
     type: dropdown
     required: true
     options:
@@ -100,54 +112,60 @@ sections:
       description: 'Chaine maitrisee : quelques rangs, visibilite correcte, interruption
         improbable'
       value: 4
-    - label: 'Chaine complexe : rangs multiples, sous-traitants peu visibles, defaut
-        non localisable ralentissant la production'
+    - label: 'Chaine complexe : rangs multiples, sous-traitants peu visibles, un defaut
+        non localisable ralentirait la production'
       description: 'Chaine complexe : rangs multiples, sous-traitants peu visibles,
-        defaut non localisable ralentissant la production'
+        un defaut non localisable ralentirait la production'
       value: 7
-    - label: 'Chaine longue et opaque : dependance a des rangs profonds non transparents,
-        defaut pouvant arreter la production'
+    - label: 'Chaine longue et opaque : dependance a des rangs profonds non transparents
+        (points d''agregation ou les origines se melangent, source unique critique),
+        un defaut non localisable peut arreter la production'
       description: 'Chaine longue et opaque : dependance a des rangs profonds non
-        transparents, defaut pouvant arreter la production'
-      value: 10
+        transparents (points d''agregation ou les origines se melangent, source unique
+        critique), un defaut non localisable peut arreter la production'
+      value: 9.5
     contributes_to:
       x: 0.25
       y: 0.0
       size: 0.0
 - id: valeur_strategique
-  label: Valeur
+  label: Valeur strategique
   questions:
   - id: v1_differenciation_premium
     label: V1 - Differenciation et premium
-    description: La tracabilite de cette famille peut-elle justifier un prix ou un positionnement superieur ?
+    description: La tracabilite de cette famille peut-elle justifier un prix ou un
+      positionnement superieur ?
     type: dropdown
     required: true
     options:
     - label: 'Produit banalise : personne ne paie pour la provenance, la concurrence
-        se joue sur le prix'
+        se joue sur les prix'
       description: 'Produit banalise : personne ne paie pour la provenance, la concurrence
-        se joue sur le prix'
+        se joue sur les prix'
       value: 1
     - label: 'Modere : la provenance est appreciee mais ne modifie ni le prix ni le
         choix d''achat'
       description: 'Modere : la provenance est appreciee mais ne modifie ni le prix
         ni le choix d''achat'
       value: 4
-    - label: 'Argument de vente : la tracabilite soutient le positionnement'
-      description: 'Argument de vente : la tracabilite soutient le positionnement'
+    - label: 'Argument de vente : la tracabilite se met en avant et soutient un positionnement
+        (origine certifiee, qualite prouvee)'
+      description: 'Argument de vente : la tracabilite se met en avant et soutient
+        un positionnement (origine certifiee, qualite prouvee)'
       value: 7
     - label: 'Element central : la provenance porte le premium et fonde l''identite
-        du produit'
+        du produit (luxe, bio, provenance ethique)'
       description: 'Element central : la provenance porte le premium et fonde l''identite
-        du produit'
-      value: 10
+        du produit (luxe, bio, provenance ethique)'
+      value: 9.5
     contributes_to:
       x: 0.0
       y: 0.25
       size: 0.0
   - id: v2_confiance_engagement_client
     label: V2 - Confiance et engagement client
-    description: La transparence renforce-t-elle la relation avec le client, comme la fidelite, le rachat ou la recommandation ?
+    description: 'La transparence renforce-t-elle la relation : fidelite, rachat,
+      recommandation ?'
     type: dropdown
     required: true
     options:
@@ -160,22 +178,24 @@ sections:
       description: 'Clientele attentive : la transparence est un plus apprecie, sans
         effet observable sur la fidelite'
       value: 4
-    - label: 'Clientele sensible : la transparence nourrit la confiance et le rachat'
+    - label: 'Clientele sensible : la transparence nourrit la confiance et le rachat
+        (alimentation, cosmetique, produits pour enfants)'
       description: 'Clientele sensible : la transparence nourrit la confiance et le
-        rachat'
+        rachat (alimentation, cosmetique, produits pour enfants)'
       value: 7
     - label: 'Clientele exigeante : la preuve de provenance conditionne l''achat et
-        cree un attachement durable'
+        cree un attachement durable (petite enfance, sante, consommation militante)'
       description: 'Clientele exigeante : la preuve de provenance conditionne l''achat
-        et cree un attachement durable'
-      value: 10
+        et cree un attachement durable (petite enfance, sante, consommation militante)'
+      value: 9.5
     contributes_to:
       x: 0.0
       y: 0.25
       size: 0.0
   - id: v3_resilience_proactive
     label: V3 - Resilience proactive
-    description: La visibilite de la chaine permet-elle d'anticiper les ruptures et d'en faire un avantage concurrentiel ?
+    description: La visibilite de la chaine permet-elle d'anticiper les ruptures et
+      d'en faire un avantage concurrentiel ?
     type: dropdown
     required: true
     options:
@@ -184,28 +204,31 @@ sections:
       description: 'Aucun gain : approvisionnement simple, substituts abondants, rien
         a anticiper'
       value: 1
-    - label: 'Anticipation limitee : la visibilite aide ponctuellement, sans distinction
-        concurrentielle'
+    - label: 'Anticipation limitee : la visibilite aide ponctuellement, sans creer
+        une distinction des concurrents'
       description: 'Anticipation limitee : la visibilite aide ponctuellement, sans
-        distinction concurrentielle'
+        creer une distinction des concurrents'
       value: 4
     - label: 'Avantage net : detecter les tensions amont avant les concurrents securise
         l''approvisionnement'
       description: 'Avantage net : detecter les tensions amont avant les concurrents
         securise l''approvisionnement'
       value: 7
-    - label: 'Robustesse differenciante : la visibilite bout-en-bout permet de tenir
-        quand les concurrents subissent'
-      description: 'Robustesse differenciante : la visibilite bout-en-bout permet
-        de tenir quand les concurrents subissent'
-      value: 10
+    - label: 'Robustesse differenciante : sur une chaine longue et complexe, ou une
+        source critique, la visibilite bout-en-bout permet de tenir quand les concurrents
+        subissent'
+      description: 'Robustesse differenciante : sur une chaine longue et complexe,
+        ou une source critique, la visibilite bout-en-bout permet de tenir quand les
+        concurrents subissent'
+      value: 9.5
     contributes_to:
       x: 0.0
       y: 0.25
       size: 0.0
   - id: v4_nouveaux_modeles_affaires
     label: V4 - Nouveaux modeles d'affaires
-    description: La donnee de tracabilite peut-elle ouvrir des relais de croissance, d'usage, de circularite ou de seconde vie ?
+    description: La donnee de tracabilite peut-elle ouvrir des relais de croissance
+      (usage, circularite, seconde vie) ?
     type: dropdown
     required: true
     options:
@@ -217,101 +240,273 @@ sections:
       description: 'Potentiel diffus : des usages sont imaginables, aucun n''est etudie
         concretement'
       value: 4
-    - label: 'Piste engagee : un modele est a l''etude ou emerge dans le secteur avec
-        des cas operationnels'
-      description: 'Piste engagee : un modele est a l''etude ou emerge dans le secteur
-        avec des cas operationnels'
+    - label: 'Piste engagee : un modele est a l''etude avec des ressources allouees
+        ou emerge dans le secteur avec des cas operationnels'
+      description: 'Piste engagee : un modele est a l''etude avec des ressources allouees
+        ou emerge dans le secteur avec des cas operationnels'
       value: 7
     - label: 'Relais de croissance avere : un modele fonde sur la donnee de tracabilite
-        est operationnel ou impose'
+        est operationnel ou impose par la reglementation (facturation a l''usage,
+        seconde vie reglementee type passeport batterie)'
       description: 'Relais de croissance avere : un modele fonde sur la donnee de
-        tracabilite est operationnel ou impose'
-      value: 10
+        tracabilite est operationnel ou impose par la reglementation (facturation
+        a l''usage, seconde vie reglementee type passeport batterie)'
+      value: 9.5
     contributes_to:
       x: 0.0
       y: 0.25
       size: 0.0
 - id: couts
   label: Couts
-  questions: []
+  questions:
+  - id: s1_profondeur_chaine
+    label: Profondeur de chaine a couvrir
+    description: Jusqu'a quel rang la tracabilite de cette famille doit-elle remonter
+      ?
+    type: dropdown
+    required: true
+    options:
+    - label: 'Le rang 1 suffit : fournisseurs directs uniquement'
+      description: 'Le rang 1 suffit : fournisseurs directs uniquement'
+      value: 1
+    - label: 'Rangs 1 a 2 : remontee limitee aux fournisseurs directs et a leurs principaux
+        fournisseurs'
+      description: 'Rangs 1 a 2 : remontee limitee aux fournisseurs directs et a leurs
+        principaux fournisseurs'
+      value: 4
+    - label: 'Remontee profonde : plusieurs rangs a couvrir, points d''agregation
+        a traverser'
+      description: 'Remontee profonde : plusieurs rangs a couvrir, points d''agregation
+        a traverser'
+      value: 7
+    - label: 'Remontee jusqu''a l''origine : matiere premiere, parcelle, mine - tous
+        les rangs sont a couvrir'
+      description: 'Remontee jusqu''a l''origine : matiere premiere, parcelle, mine
+        - tous les rangs sont a couvrir'
+      value: 9.5
+    contributes_to:
+      x: 0.0
+      y: 0.0
+      size: 0.2
+  - id: s2_heterogeneite_parc_fournisseurs
+    label: Heterogeneite du parc fournisseurs a chaque rang
+    description: A profondeur egale, qui faut-il embarquer - et a quel cout de co-construction
+      ?
+    type: dropdown
+    required: true
+    options:
+    - label: 'Parc homogene et mature : fournisseurs peu nombreux, equipes numeriquement,
+        standards partages (type GS1)'
+      description: 'Parc homogene et mature : fournisseurs peu nombreux, equipes numeriquement,
+        standards partages (type GS1)'
+      value: 1
+    - label: 'Parc mixte : majorite de fournisseurs equipes, quelques retardataires
+        a accompagner'
+      description: 'Parc mixte : majorite de fournisseurs equipes, quelques retardataires
+        a accompagner'
+      value: 4
+    - label: 'Parc heterogene : fournisseurs nombreux, maturites numeriques inegales,
+        peu de standards communs'
+      description: 'Parc heterogene : fournisseurs nombreux, maturites numeriques
+        inegales, peu de standards communs'
+      value: 7
+    - label: 'Parc disperse et peu mature : multitude d''acteurs, faible equipement,
+        aucun standard commun - la co-construction est le principal poste de cout'
+      description: 'Parc disperse et peu mature : multitude d''acteurs, faible equipement,
+        aucun standard commun - la co-construction est le principal poste de cout'
+      value: 9.5
+    contributes_to:
+      x: 0.0
+      y: 0.0
+      size: 0.2
+  - id: s3_finesse_maille_conservation
+    label: Finesse de maille et duree de conservation requises
+    description: A quel niveau de detail faut-il tracer, et combien de temps conserver
+      la donnee ?
+    type: dropdown
+    required: true
+    options:
+    - label: Maille lot, conservation courte (quelques mois a deux ans)
+      description: Maille lot, conservation courte (quelques mois a deux ans)
+      value: 1
+    - label: Maille lot fin ou serie, conservation de quelques annees
+      description: Maille lot fin ou serie, conservation de quelques annees
+      value: 4
+    - label: Maille unite ou composant, conservation longue (5 a 15 ans)
+      description: Maille unite ou composant, conservation longue (5 a 15 ans)
+      value: 7
+    - label: 'Maille unitaire ou composant critique, archivage sur plusieurs decennies
+        (logique de prime d''assurance : aeronautique, pharmaceutique)'
+      description: 'Maille unitaire ou composant critique, archivage sur plusieurs
+        decennies (logique de prime d''assurance : aeronautique, pharmaceutique)'
+      value: 9.5
+    contributes_to:
+      x: 0.0
+      y: 0.0
+      size: 0.2
+  - id: s4_ecart_systeme_information
+    label: Ecart au systeme d'information existant
+    description: Quelle part des donnees requises le SI actuel capture-t-il deja ?
+    type: dropdown
+    required: true
+    options:
+    - label: 'Les donnees existent dans l''ERP / QMS : il suffit de les exposer'
+      description: 'Les donnees existent dans l''ERP / QMS : il suffit de les exposer'
+      value: 1
+    - label: 'Capture partielle : complements a construire sur quelques processus'
+      description: 'Capture partielle : complements a construire sur quelques processus'
+      value: 4
+    - label: 'Capture minoritaire : la majorite des donnees est a creer, plusieurs
+        interfaces a batir'
+      description: 'Capture minoritaire : la majorite des donnees est a creer, plusieurs
+        interfaces a batir'
+      value: 7
+    - label: 'Donnees a creer ex nihilo : processus de capture entierement a construire,
+        du terrain au SI'
+      description: 'Donnees a creer ex nihilo : processus de capture entierement a
+        construire, du terrain au SI'
+      value: 9.5
+    contributes_to:
+      x: 0.0
+      y: 0.0
+      size: 0.2
+  - id: s5_impact_organisationnel
+    label: Impact organisationnel
+    description: Combien de processus et de personnes le deploiement touche-t-il ?
+    type: dropdown
+    required: true
+    options:
+    - label: 'Impact marginal : peu de processus modifies, quelques utilisateurs a
+        former'
+      description: 'Impact marginal : peu de processus modifies, quelques utilisateurs
+        a former'
+      value: 1
+    - label: 'Impact contenu : plusieurs services concernes, formation ciblee'
+      description: 'Impact contenu : plusieurs services concernes, formation ciblee'
+      value: 4
+    - label: 'Impact etendu : processus de travail a reorganiser partiellement, formation
+        de plusieurs equipes'
+      description: 'Impact etendu : processus de travail a reorganiser partiellement,
+        formation de plusieurs equipes'
+      value: 7
+    - label: 'Transformation : refonte de processus, formation etendue, conduite du
+        changement lourde et continue'
+      description: 'Transformation : refonte de processus, formation etendue, conduite
+        du changement lourde et continue'
+      value: 9.5
+    contributes_to:
+      x: 0.0
+      y: 0.0
+      size: 0.2
 scenarios:
-- id: balanced
-  label: Scenario 1 - Balanced
-  description: Balanced weighting across criticite and valeur questions.
+- id: socle
+  label: Socle
+  description: Point de depart pour une entreprise sans posture strategique dominante.
+    Il sert de base aux trois calibrages lies aux preoccupations dominantes de l'entreprise.
   weights:
     c1_obligation_reglementaire_contractuelle:
-      x: 1.0
+      x: 1.2
     c2_risque_sanitaire_securite:
-      x: 1.0
+      x: 1.2
     c3_exposition_incident:
       x: 1.0
     c4_risque_operationnel_continuite:
-      x: 1.0
+      x: 0.6
     v1_differenciation_premium:
-      y: 1.0
+      y: 1.4
     v2_confiance_engagement_client:
       y: 1.0
     v3_resilience_proactive:
       y: 1.0
     v4_nouveaux_modeles_affaires:
-      y: 1.0
-- id: regulatory_pressure
-  label: Scenario 2 - Regulatory pressure
-  description: Gives more importance to regulatory, safety, and incident exposure.
+      y: 0.6
+- id: defensif_conformite
+  label: Defensif / conformite
+  description: 'Posture defensive ou de conformite, adaptee par exemple a la pharmacie,
+    l''agroalimentaire ou l''aeronautique. C1 et C2 sont accentues : la tracabilite
+    sert a repondre aux exigences reglementaires et du marche.'
   weights:
     c1_obligation_reglementaire_contractuelle:
       x: 1.4
     c2_risque_sanitaire_securite:
-      x: 1.3
+      x: 1.4
     c3_exposition_incident:
-      x: 1.2
-    c4_risque_operationnel_continuite:
       x: 0.8
+    c4_risque_operationnel_continuite:
+      x: 0.4
     v1_differenciation_premium:
-      y: 0.8
+      y: 1.4
     v2_confiance_engagement_client:
       y: 1.0
     v3_resilience_proactive:
-      y: 0.9
+      y: 1.0
     v4_nouveaux_modeles_affaires:
-      y: 0.8
-- id: market_value
-  label: Scenario 3 - Market value
-  description: Gives more importance to differentiation, customer trust, and growth models.
+      y: 0.6
+- id: offensif_differenciation
+  label: Offensif / differenciation
+  description: 'Posture offensive ou de differenciation, adaptee par exemple a la
+    grande consommation ou aux marques ethiques. V1 et V2 sont accentues : la tracabilite
+    est d''abord un levier de marque.'
   weights:
     c1_obligation_reglementaire_contractuelle:
-      x: 0.8
+      x: 1.2
     c2_risque_sanitaire_securite:
-      x: 0.9
+      x: 1.2
     c3_exposition_incident:
       x: 1.0
     c4_risque_operationnel_continuite:
-      x: 0.8
+      x: 0.6
     v1_differenciation_premium:
-      y: 1.4
+      y: 1.6
     v2_confiance_engagement_client:
-      y: 1.3
+      y: 1.2
     v3_resilience_proactive:
-      y: 0.9
+      y: 0.6
     v4_nouveaux_modeles_affaires:
-      y: 1.4
-- id: operational_resilience
-  label: Scenario 4 - Operational resilience
-  description: Gives more importance to operational continuity and proactive resilience.
+      y: 0.6
+- id: resilience_continuite
+  label: Resilience / continuite
+  description: 'Posture de resilience ou de continuite, adaptee aux chaines longues
+    ou exposees geopolitiquement. C4 et V3 sont accentues : la tracabilite sert a
+    securiser la robustesse de l''approvisionnement.'
   weights:
     c1_obligation_reglementaire_contractuelle:
-      x: 0.9
+      x: 1.0
     c2_risque_sanitaire_securite:
       x: 1.0
     c3_exposition_incident:
-      x: 1.1
+      x: 0.8
     c4_risque_operationnel_continuite:
-      x: 1.5
+      x: 1.2
     v1_differenciation_premium:
-      y: 0.8
+      y: 1.0
     v2_confiance_engagement_client:
-      y: 0.9
-    v3_resilience_proactive:
-      y: 1.5
-    v4_nouveaux_modeles_affaires:
       y: 0.8
+    v3_resilience_proactive:
+      y: 1.6
+    v4_nouveaux_modeles_affaires:
+      y: 0.6
+bubble_sizes:
+- min_score: 0
+  max_score: 2
+  label: Petite
+  plot_size: 20
+  reading: 'A enjeu strategique egal : gain rapide (quick win), a engager en premier.'
+- min_score: 3
+  max_score: 5
+  label: Moderee
+  plot_size: 40
+  reading: 'Investissement contenu : a engager tot si la position sur les axes le
+    justifie.'
+- min_score: 6
+  max_score: 8
+  label: Grande
+  plot_size: 60
+  reading: 'Investissement consequent : a prevoir et a inscrire dans un plan a moyen
+    terme.'
+- min_score: 9
+  max_score: 10
+  label: Tres grande
+  plot_size: 80
+  reading: 'Investissement exceptionnel : a phaser, mutualiser ou conditionner a la
+    posture strategique. Cette categorie doit rester rare.'

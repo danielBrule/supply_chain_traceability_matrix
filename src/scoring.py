@@ -9,6 +9,36 @@ import yaml
 
 QUESTIONS_PATH = Path("config/questions.yaml")
 SCORE_KEYS = ("x", "y", "size")
+DEFAULT_BUBBLE_SIZE_RULES = [
+    {
+        "min_score": 0,
+        "max_score": 2,
+        "label": "Petite",
+        "plot_size": 20,
+        "reading": "Gain rapide",
+    },
+    {
+        "min_score": 3,
+        "max_score": 5,
+        "label": "Moderee",
+        "plot_size": 40,
+        "reading": "Investissement contenu",
+    },
+    {
+        "min_score": 6,
+        "max_score": 8,
+        "label": "Grande",
+        "plot_size": 60,
+        "reading": "Investissement consequent",
+    },
+    {
+        "min_score": 9,
+        "max_score": 10,
+        "label": "Tres grande",
+        "plot_size": 80,
+        "reading": "Investissement exceptionnel",
+    },
+]
 
 
 def load_questions(path: str | Path = QUESTIONS_PATH) -> dict[str, Any]:
@@ -50,7 +80,14 @@ def calculate_scores(
     """Calculate weighted chart scores for a category's answers."""
     completion = calculate_completion(category_answers, questions)
     if completion != "complete":
-        return {"x": None, "y": None, "size": None, "completion": completion}
+        return {
+            "x": None,
+            "y": None,
+            "size": None,
+            "size_score": None,
+            "size_label": None,
+            "completion": completion,
+        }
 
     scores = {key: 0.0 for key in SCORE_KEYS}
 
@@ -67,10 +104,15 @@ def calculate_scores(
             scenario_weight = _scenario_weight(scenario, question_id, score_key)
             scores[score_key] += value * question_weight * scenario_weight
 
+    size_score = round(scores["size"], 2)
+    bubble_size = classify_bubble_size(size_score, questions)
+
     return {
         "x": round(scores["x"], 2),
         "y": round(scores["y"], 2),
-        "size": round(scores["size"], 2),
+        "size": bubble_size["plot_size"],
+        "size_score": size_score,
+        "size_label": bubble_size["label"],
         "completion": completion,
     }
 
@@ -109,6 +151,21 @@ def get_scenario_by_id(
         if scenario["id"] == scenario_id:
             return scenario
     return scenarios[0]
+
+
+def get_bubble_size_rules(questions: dict[str, Any]) -> list[dict[str, Any]]:
+    """Return configured bubble-size interpretation rules."""
+    return questions.get("bubble_sizes", DEFAULT_BUBBLE_SIZE_RULES)
+
+
+def classify_bubble_size(score: float, questions: dict[str, Any]) -> dict[str, Any]:
+    """Map a raw cost score to a plotted bubble-size rule."""
+    rules = get_bubble_size_rules(questions)
+    for rule in rules:
+        if score <= float(rule["max_score"]):
+            return rule
+
+    return rules[-1]
 
 
 def _has_answer(category_answers: dict[str, Any], question_id: str) -> bool:

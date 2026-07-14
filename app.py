@@ -21,6 +21,7 @@ from src.db import (
 from src.scoring import (
     calculate_completion,
     calculate_scores,
+    get_bubble_size_rules,
     get_scenario_by_id,
     get_scenarios,
     load_questions,
@@ -128,20 +129,20 @@ def total_answer_count(answers: dict, questions: dict) -> tuple[int, int]:
 
 def completion_label(completion: str, answered: int, required: int) -> str:
     labels = {
-        "complete": "Complete",
-        "partial": "Partial",
-        "not_started": "Not started",
+        "complete": "Complétée",
+        "partial": "Partielle",
+        "not_started": "Non commencee",
     }
-    return f"{labels[completion]} - {answered} / {required} required answered"
+    return f"{labels[completion]} - {answered} / {required} reponses requises completees"
 
 
 def category_sidebar_label(category: dict, questions: dict) -> str:
     answers = get_answers(category["id"])
     completion = calculate_completion(answers, questions)
     status_labels = {
-        "complete": "Complete",
-        "partial": "Partial",
-        "not_started": "Not started",
+        "complete": "Complétée",
+        "partial": "Partielle",
+        "not_started": "Non commencee",
     }
     return f"{category['name']} - {status_labels[completion]}"
 
@@ -193,11 +194,11 @@ def ensure_selected_category_id(categories: list[dict]) -> int | None:
 
 
 def render_products_sidebar(categories: list[dict], questions: dict) -> int | None:
-    st.sidebar.subheader("Product categories")
+    st.sidebar.subheader("Famille de produit")
 
     selected_category_id = ensure_selected_category_id(categories)
     if not categories:
-        st.sidebar.caption("No active products")
+        st.sidebar.caption("Aucune famille de produit active")
     else:
         for category in categories:
             product_clicked = render_product_button(
@@ -211,18 +212,18 @@ def render_products_sidebar(categories: list[dict], questions: dict) -> int | No
                 st.session_state.page = "Assessment"
                 st.rerun()
 
-    with st.sidebar.popover("+ Add category"):
+    with st.sidebar.popover("+ Ajouter une famille"):
         with st.form("sidebar_create_category_form", clear_on_submit=True):
-            name = st.text_input("Name", key="sidebar_new_category_name")
+            name = st.text_input("Nom", key="sidebar_new_category_name")
             description = st.text_area(
                 "Description",
                 height=90,
                 key="sidebar_new_category_description",
             )
 
-            if st.form_submit_button("Add"):
+            if st.form_submit_button("Ajouter"):
                 if not name.strip():
-                    st.warning("Category name is required.")
+                    st.warning("Le nom de la famille de produit est obligatoire.")
                 else:
                     category_id = create_category(name, description)
                     st.session_state.selected_category_id = category_id
@@ -235,10 +236,10 @@ def render_products_sidebar(categories: list[dict], questions: dict) -> int | No
 def render_tools_sidebar() -> None:
     with st.sidebar.container():
         st.markdown("<span class='sidebar-tools-marker'></span>", unsafe_allow_html=True)
-        st.subheader("Tools")
+        st.subheader("Outils")
 
         if st.button(
-            "Matrix",
+            "Matrice",
             type="primary" if st.session_state.get("page") == "Matrix / Bubble chart" else "secondary",
             width="stretch",
         ):
@@ -246,7 +247,7 @@ def render_tools_sidebar() -> None:
             st.rerun()
 
         if st.button(
-            "Admin",
+            "Administration",
             type="primary" if st.session_state.get("page") == "Categories admin" else "secondary",
             width="stretch",
         ):
@@ -260,8 +261,8 @@ def render_assessment_page(
     questions: dict,
 ) -> None:
     if selected_category_id is None:
-        st.header("Assessment")
-        st.info("Add a category before starting an assessment.")
+        st.header("Evaluation")
+        st.info("Ajoutez une famille de produit avant de commencer une evaluation.")
         return
 
     category_by_id = {category["id"]: category for category in categories}
@@ -296,16 +297,16 @@ def render_assessment_page(
                         )
                     elif question["type"] == "number":
                         pending_answers[question_id] = st.number_input(
-                            "Answer",
+                            "Reponse",
                             value=number_value(saved_value),
                             step=1.0,
                             key=key,
                             label_visibility="collapsed",
                         )
                     else:
-                        st.warning(f"Unsupported question type: {question['type']}")
+                        st.warning(f"Type de question non supporte : {question['type']}")
 
-        submitted = st.form_submit_button("Save assessment")
+        submitted = st.form_submit_button("Sauvegarder")
         if submitted:
             for question_id, value in pending_answers.items():
                 save_answer(
@@ -313,17 +314,17 @@ def render_assessment_page(
                     question_id,
                     "" if value is None else value,
                 )
-            st.success(f"Saved assessment for {selected_category['name']}.")
+            st.success(f"Evaluation sauvegardee pour {selected_category['name']}.")
             st.rerun()
 
     st.divider()
     edit_key = f"edit_selected_category_{selected_category['id']}"
     edit_col, delete_col = st.columns([0.22, 0.78])
-    if edit_col.button("Edit category details", key=f"toggle_{edit_key}"):
+    if edit_col.button("Modifier la famille de produit", key=f"toggle_{edit_key}"):
         st.session_state[edit_key] = not st.session_state.get(edit_key, False)
 
     if delete_col.button(
-        "Deactivate category",
+        "Desactiver la famille de produit",
         key=f"deactivate_selected_category_{selected_category['id']}",
     ):
         deactivate_category(selected_category["id"])
@@ -332,15 +333,15 @@ def render_assessment_page(
 
     if st.session_state.get(edit_key, False):
         with st.form(f"selected_category_details_{selected_category['id']}"):
-            updated_name = st.text_input("Category name", value=selected_category["name"])
+            updated_name = st.text_input("Nom de la famille de produit", value=selected_category["name"])
             updated_description = st.text_area(
-                "Category description",
+                "Description de la famille de produit",
                 value=selected_category["description"],
                 height=90,
             )
-            if st.form_submit_button("Save category details"):
+            if st.form_submit_button("Enregistrer la famille de produit"):
                 if not updated_name.strip():
-                    st.warning("Category name is required.")
+                    st.warning("Le nom de la famille de produit est obligatoire.")
                 else:
                     update_category(
                         selected_category["id"],
@@ -348,7 +349,7 @@ def render_assessment_page(
                         updated_description,
                     )
                     st.session_state[edit_key] = False
-                    st.success("Category details updated.")
+                    st.success("Famille de produit mise a jour.")
                     st.rerun()
 
 
@@ -373,6 +374,8 @@ def build_chart_rows(
                     "x": scores["x"],
                     "y": scores["y"],
                     "size": scores["size"],
+                    "size_score": scores["size_score"],
+                    "size_label": scores["size_label"],
                     "completion": scores["completion"],
                 }
             )
@@ -390,7 +393,7 @@ def build_chart_rows(
 
 
 def render_chart_page(categories: list[dict], questions: dict) -> None:
-    st.header("Matrix / Bubble chart")
+    st.header("Matrice")
 
     selected_scenario = get_selected_scenario(questions)
     st.caption(f"Scenario: {selected_scenario['label']}")
@@ -403,7 +406,7 @@ def render_chart_page(categories: list[dict], questions: dict) -> None:
         selected_scenario,
     )
     if not chart_rows:
-        st.info("No complete categories yet. Complete all required answers to show bubbles.")
+        st.info("Aucune famille de produit complete pour le moment. Completez toutes les reponses obligatoires pour afficher les bulles.")
     else:
         chart_data = pd.DataFrame(chart_rows)
         fig = px.scatter(
@@ -417,27 +420,30 @@ def render_chart_page(categories: list[dict], questions: dict) -> None:
                 "description": True,
                 "x": ":.2f",
                 "y": ":.2f",
-                "size": ":.2f",
+                "size": False,
+                "size_score": ":.2f",
+                "size_label": True,
                 "completion": False,
             },
             labels={
                 "x": "Criticite",
                 "y": "Valeur",
-                "size": "Couts",
-                "category": "Product category",
+                "size_score": "Score cout",
+                "size_label": "Taille de bulle",
+                "category": "Famille de produit",
             },
             size_max=60,
         )
         fig.update_layout(
             height=620,
             margin={"l": 20, "r": 20, "t": 30, "b": 20},
-            legend_title_text="Product category",
+            legend_title_text="Famille de produit",
         )
         st.plotly_chart(fig, width="stretch")
 
     if incomplete_rows:
-        st.subheader("Not shown on chart")
-        st.caption("Only categories with all required answers complete are plotted.")
+        st.subheader("Non affichees sur la matrice")
+        st.caption("Seules les familles de produit avec toutes les reponses obligatoires completees sont affichees.")
         st.dataframe(
             pd.DataFrame(incomplete_rows),
             width="stretch",
@@ -451,17 +457,19 @@ def get_selected_scenario(questions: dict) -> dict:
 
 
 def render_categories_admin_page(questions: dict) -> None:
-    st.header("Admin")
+    st.header("Administration")
 
     categories = get_active_categories()
     inactive_categories = get_inactive_categories()
 
     render_scenario_settings(questions)
     st.divider()
+    render_bubble_size_legend(questions)
+    st.divider()
 
-    st.subheader("Active categories")
+    st.subheader("Familles de produit actives")
     if not categories:
-        st.info("No active categories yet.")
+        st.info("Aucune famille de produit active.")
     else:
         for category in categories:
             with st.expander(category["name"]):
@@ -469,13 +477,13 @@ def render_categories_admin_page(questions: dict) -> None:
                     st.write(category["description"])
                 answers = get_answers(category["id"])
                 answered, total = total_answer_count(answers, questions)
-                st.caption(f"Progress {answered} / {total} questions answered")
-                st.caption(f"Last updated {category['updated_at']}")
+                st.caption(f"Progression {answered} / {total} reponses")
+                st.caption(f"Derniere mise a jour {category['updated_at']}")
 
     st.divider()
-    st.subheader("Inactive categories")
+    st.subheader("Familles de produit inactives")
     if not inactive_categories:
-        st.info("No inactive categories.")
+        st.info("Aucune famille de produit inactive.")
     else:
         for category in inactive_categories:
             category_col, action_col = st.columns([0.75, 0.25])
@@ -485,10 +493,10 @@ def render_categories_admin_page(questions: dict) -> None:
                     st.caption(category["description"])
                 answers = get_answers(category["id"])
                 answered, total = total_answer_count(answers, questions)
-                st.caption(f"Progress {answered} / {total} questions answered")
-                st.caption(f"Last updated {category['updated_at']}")
+                st.caption(f"Progression {answered} / {total} reponses")
+                st.caption(f"Derniere mise a jour {category['updated_at']}")
             if action_col.button(
-                "Add back",
+                "Reactiver",
                 key=f"reactivate_category_{category['id']}",
                 width="stretch",
             ):
@@ -498,20 +506,20 @@ def render_categories_admin_page(questions: dict) -> None:
                 st.rerun()
 
     st.divider()
-    st.subheader("Danger zone")
-    st.warning("This permanently deletes all products and all saved answers.")
+    st.subheader("Zone de danger")
+    st.warning("Cette action supprime definitivement toutes les familles de produit et toutes les reponses sauvegardees.")
     with st.form("delete_all_products_form"):
-        confirmation = st.text_input("Type DELETE to confirm")
-        delete_submitted = st.form_submit_button("Delete all products permanently")
+        confirmation = st.text_input("Ecrire DELETE pour confirmer")
+        delete_submitted = st.form_submit_button("Supprimer toutes les familles de produit definitivement")
 
         if delete_submitted:
             if confirmation != "DELETE":
-                st.warning("Type DELETE exactly to confirm.")
+                st.warning("Ecrire DELETE exactement pour confirmer.")
             else:
                 delete_all_categories()
                 st.session_state.pop("selected_category_id", None)
                 st.session_state.page = "Assessment"
-                st.success("All products and answers were permanently deleted.")
+                st.success("Toutes les familles de produit et les reponses ont ete supprimees definitivement.")
                 st.rerun()
 
 
@@ -521,7 +529,7 @@ def render_scenario_settings(questions: dict) -> None:
     scenario_ids = [scenario["id"] for scenario in scenarios]
     selected_index = scenario_ids.index(selected_scenario["id"])
 
-    st.subheader("Project scenario")
+    st.subheader("Scenario")
 
     with st.form("project_scenario_form"):
         chosen_scenario = st.radio(
@@ -531,9 +539,9 @@ def render_scenario_settings(questions: dict) -> None:
             format_func=scenario_display_text,
         )
 
-        if st.form_submit_button("Save scenario"):
+        if st.form_submit_button("Sauvegarder le scenario"):
             save_setting("scenario_id", chosen_scenario["id"])
-            st.success(f"Saved project scenario: {chosen_scenario['label']}.")
+            st.success(f"Scenario sauvegarde : {chosen_scenario['label']}.")
             st.rerun()
 
 
@@ -544,16 +552,34 @@ def scenario_display_text(scenario: dict) -> str:
     return f"{scenario['label']} - {description}"
 
 
+def render_bubble_size_legend(questions: dict) -> None:
+    st.subheader("Taille de bulle")
+    st.dataframe(
+        pd.DataFrame(
+            [
+                {
+                    "Score cout": f"{rule['min_score']} - {rule['max_score']}",
+                    "Taille de bulle": rule["label"],
+                    "Lecture": rule["reading"],
+                }
+                for rule in get_bubble_size_rules(questions)
+            ]
+        ),
+        width="stretch",
+        hide_index=True,
+    )
+
+
 def render_dropdown_question(
     options: list[dict],
     saved_value: object,
     key: str,
 ) -> object:
-    choices = [{"label": "Not answered", "value": None}, *options]
+    choices = [{"label": "Non renseigne", "value": None}, *options]
     values = [choice["value"] for choice in choices]
     selected_index = values.index(saved_value) if saved_value in values else 0
     selected = st.selectbox(
-        "Answer",
+        "Reponse",
         choices,
         index=selected_index,
         format_func=option_display_text,
@@ -588,7 +614,7 @@ def number_value(value: object) -> float | None:
 
 
 st.set_page_config(
-    page_title="Supply Chain Traceability Matrix",
+    page_title="Matrice de tracabilite supply chain",
     layout="wide",
 )
 
