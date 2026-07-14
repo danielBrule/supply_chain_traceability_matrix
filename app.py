@@ -1,3 +1,5 @@
+import html
+
 import pandas as pd
 import plotly.express as px
 import streamlit as st
@@ -12,9 +14,17 @@ from src.db import (
     init_db,
     reactivate_category,
     save_answer,
+    save_setting,
+    get_setting,
     update_category,
 )
-from src.scoring import calculate_completion, calculate_scores, load_questions
+from src.scoring import (
+    calculate_completion,
+    calculate_scores,
+    get_scenario_by_id,
+    get_scenarios,
+    load_questions,
+)
 
 
 def apply_sidebar_styles() -> None:
@@ -152,7 +162,10 @@ def render_product_button(
     answers = get_answers(category["id"])
     completion = calculate_completion(answers, questions)
     status_label = category_sidebar_label(category, questions)
-    selected = category["id"] == selected_category_id
+    selected = (
+        category["id"] == selected_category_id
+        and st.session_state.get("page") == "Assessment"
+    )
     dot_col, button_col = st.sidebar.columns([0.12, 0.88])
     with dot_col:
         product_status_dot(completion, selected)
@@ -270,26 +283,24 @@ def render_assessment_page(
             with tab:
                 for question in section["questions"]:
                     question_id = question["id"]
-                    label = question["label"]
-                    if question.get("required", False):
-                        label = f"{label} *"
+                    render_question_prompt(question)
 
                     saved_value = answers.get(question_id)
                     key = f"answer_{selected_category['id']}_{question_id}"
 
                     if question["type"] == "dropdown":
                         pending_answers[question_id] = render_dropdown_question(
-                            label,
                             question["options"],
                             saved_value,
                             key,
                         )
                     elif question["type"] == "number":
                         pending_answers[question_id] = st.number_input(
-                            label,
+                            "Answer",
                             value=number_value(saved_value),
                             step=1.0,
                             key=key,
+                            label_visibility="collapsed",
                         )
                     else:
                         st.warning(f"Unsupported question type: {question['type']}")
@@ -341,13 +352,17 @@ def render_assessment_page(
                     st.rerun()
 
 
-def build_chart_rows(categories: list[dict], questions: dict) -> tuple[list[dict], list[dict]]:
+def build_chart_rows(
+    categories: list[dict],
+    questions: dict,
+    scenario: dict,
+) -> tuple[list[dict], list[dict]]:
     chart_rows = []
     incomplete_rows = []
 
     for category in categories:
         answers = get_answers(category["id"])
-        scores = calculate_scores(answers, questions)
+        scores = calculate_scores(answers, questions, scenario)
         answered, required = required_answer_count(answers, questions)
 
         if scores["completion"] == "complete":
@@ -377,7 +392,16 @@ def build_chart_rows(categories: list[dict], questions: dict) -> tuple[list[dict
 def render_chart_page(categories: list[dict], questions: dict) -> None:
     st.header("Matrix / Bubble chart")
 
-    chart_rows, incomplete_rows = build_chart_rows(categories, questions)
+    selected_scenario = get_selected_scenario(questions)
+    st.caption(f"Scenario: {selected_scenario['label']}")
+    if selected_scenario.get("description"):
+        st.caption(selected_scenario["description"])
+
+    chart_rows, incomplete_rows = build_chart_rows(
+        categories,
+        questions,
+        selected_scenario,
+    )
     if not chart_rows:
         st.info("No complete categories yet. Complete all required answers to show bubbles.")
     else:
@@ -397,9 +421,9 @@ def render_chart_page(categories: list[dict], questions: dict) -> None:
                 "completion": False,
             },
             labels={
-                "x": "Supply chain criticality",
-                "y": "Traceability maturity",
-                "size": "Relative impact",
+                "x": "Criticite",
+                "y": "Valeur",
+                "size": "Couts",
                 "category": "Product category",
             },
             size_max=60,
@@ -421,11 +445,19 @@ def render_chart_page(categories: list[dict], questions: dict) -> None:
         )
 
 
+def get_selected_scenario(questions: dict) -> dict:
+    scenario_id = get_setting("scenario_id")
+    return get_scenario_by_id(questions, scenario_id)
+
+
 def render_categories_admin_page(questions: dict) -> None:
     st.header("Admin")
 
     categories = get_active_categories()
     inactive_categories = get_inactive_categories()
+
+    render_scenario_settings(questions)
+    st.divider()
 
     st.subheader("Active categories")
     if not categories:
@@ -483,30 +515,70 @@ def render_categories_admin_page(questions: dict) -> None:
                 st.rerun()
 
 
+def render_scenario_settings(questions: dict) -> None:
+    scenarios = get_scenarios(questions)
+    selected_scenario = get_selected_scenario(questions)
+    scenario_ids = [scenario["id"] for scenario in scenarios]
+    selected_index = scenario_ids.index(selected_scenario["id"])
+
+    st.subheader("Project scenario")
+
+    with st.form("project_scenario_form"):
+        chosen_scenario = st.radio(
+            "Scenario",
+            scenarios,
+            index=selected_index,
+            format_func=scenario_display_text,
+        )
+
+        if st.form_submit_button("Save scenario"):
+            save_setting("scenario_id", chosen_scenario["id"])
+            st.success(f"Saved project scenario: {chosen_scenario['label']}.")
+            st.rerun()
+
+
+def scenario_display_text(scenario: dict) -> str:
+    description = scenario.get("description")
+    if not description:
+        return scenario["label"]
+    return f"{scenario['label']} - {description}"
+
+
 def render_dropdown_question(
-    label: str,
     options: list[dict],
     saved_value: object,
     key: str,
 ) -> object:
     choices = [{"label": "Not answered", "value": None}, *options]
-    labels = [choice["label"] for choice in choices]
-    values_by_label = {choice["label"]: choice["value"] for choice in choices}
-    saved_label = next(
-        (
-            choice["label"]
-            for choice in choices
-            if choice["value"] == saved_value
-        ),
-        "Not answered",
-    )
-    selected_label = st.selectbox(
-        label,
-        labels,
-        index=labels.index(saved_label),
+    values = [choice["value"] for choice in choices]
+    selected_index = values.index(saved_value) if saved_value in values else 0
+    selected = st.selectbox(
+        "Answer",
+        choices,
+        index=selected_index,
+        format_func=option_display_text,
         key=key,
+        label_visibility="collapsed",
     )
-    return values_by_label[selected_label]
+    return selected["value"]
+
+
+def render_question_prompt(question: dict) -> None:
+    required_marker = " *" if question.get("required", False) else ""
+    label = html.escape(f"{question['label']}{required_marker}")
+    description = question.get("description", "")
+
+    if description:
+        st.markdown(
+            f"<strong>{label}</strong><br><em>{html.escape(description)}</em>",
+            unsafe_allow_html=True,
+        )
+    else:
+        st.markdown(f"<strong>{label}</strong>", unsafe_allow_html=True)
+
+
+def option_display_text(option: dict) -> str:
+    return option.get("description") or option["label"]
 
 
 def number_value(value: object) -> float | None:

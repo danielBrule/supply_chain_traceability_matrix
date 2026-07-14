@@ -43,7 +43,9 @@ def calculate_completion(
 
 
 def calculate_scores(
-    category_answers: dict[str, Any], questions: dict[str, Any]
+    category_answers: dict[str, Any],
+    questions: dict[str, Any],
+    scenario: dict[str, Any] | None = None,
 ) -> dict[str, float | str | None]:
     """Calculate weighted chart scores for a category's answers."""
     completion = calculate_completion(category_answers, questions)
@@ -61,7 +63,9 @@ def calculate_scores(
         weights = question.get("contributes_to", {})
 
         for score_key in SCORE_KEYS:
-            scores[score_key] += value * float(weights.get(score_key, 0.0))
+            question_weight = float(weights.get(score_key, 0.0))
+            scenario_weight = _scenario_weight(scenario, question_id, score_key)
+            scores[score_key] += value * question_weight * scenario_weight
 
     return {
         "x": round(scores["x"], 2),
@@ -79,6 +83,34 @@ def _iter_questions(questions: dict[str, Any]) -> list[dict[str, Any]]:
     ]
 
 
+def get_scenarios(questions: dict[str, Any]) -> list[dict[str, Any]]:
+    """Return configured scenarios, falling back to a neutral scenario."""
+    scenarios = questions.get("scenarios", [])
+    if scenarios:
+        return scenarios
+
+    return [
+        {
+            "id": "default",
+            "label": "Default scenario",
+            "description": "Neutral weighting",
+            "weights": {},
+        }
+    ]
+
+
+def get_scenario_by_id(
+    questions: dict[str, Any],
+    scenario_id: str | None,
+) -> dict[str, Any]:
+    """Find a scenario by ID, or return the first configured scenario."""
+    scenarios = get_scenarios(questions)
+    for scenario in scenarios:
+        if scenario["id"] == scenario_id:
+            return scenario
+    return scenarios[0]
+
+
 def _has_answer(category_answers: dict[str, Any], question_id: str) -> bool:
     value = category_answers.get(question_id)
     return value is not None and value != ""
@@ -89,3 +121,15 @@ def _numeric_answer(value: Any) -> float:
         return float(value)
     except (TypeError, ValueError) as exc:
         raise ValueError(f"Answer value must be numeric for scoring: {value!r}") from exc
+
+
+def _scenario_weight(
+    scenario: dict[str, Any] | None,
+    question_id: str,
+    score_key: str,
+) -> float:
+    if scenario is None or score_key == "size":
+        return 1.0
+
+    question_weights = scenario.get("weights", {}).get(question_id, {})
+    return float(question_weights.get(score_key, 1.0))

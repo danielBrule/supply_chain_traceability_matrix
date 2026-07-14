@@ -43,6 +43,15 @@ def init_db() -> None:
             )
             """
         )
+        conn.execute(
+            """
+            CREATE TABLE IF NOT EXISTS settings (
+                key TEXT PRIMARY KEY,
+                value TEXT NOT NULL,
+                updated_at TEXT NOT NULL
+            )
+            """
+        )
 
 
 def create_category(name: str, description: str = "") -> int:
@@ -165,6 +174,40 @@ def save_answer(category_id: int, question_id: str, value: Any) -> None:
             DO UPDATE SET value = excluded.value, updated_at = excluded.updated_at
             """,
             (category_id, question_id, _serialize_value(value), now),
+        )
+
+
+def get_setting(key: str, default: Any = None) -> Any:
+    """Return one project setting value."""
+    with _connect() as conn:
+        row = conn.execute(
+            """
+            SELECT value
+            FROM settings
+            WHERE key = ?
+            """,
+            (key,),
+        ).fetchone()
+
+    if row is None:
+        return default
+
+    return _deserialize_value(row["value"])
+
+
+def save_setting(key: str, value: Any) -> None:
+    """Insert or update one project setting."""
+    now = _now()
+
+    with _connect() as conn:
+        conn.execute(
+            """
+            INSERT INTO settings (key, value, updated_at)
+            VALUES (?, ?, ?)
+            ON CONFLICT(key)
+            DO UPDATE SET value = excluded.value, updated_at = excluded.updated_at
+            """,
+            (key, _serialize_value(value), now),
         )
 
 

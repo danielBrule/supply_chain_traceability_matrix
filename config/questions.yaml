@@ -1,262 +1,317 @@
 sections:
-  - id: criticite
-    label: Criticite
-    questions:
-      - id: c1_obligation_reglementaire_contractuelle
-        label: "C1 - Obligation reglementaire et contractuelle"
-        type: dropdown
-        required: true
-        options:
-          - label: "0"
-            value: 0
-          - label: "1"
-            value: 1
-          - label: "2"
-            value: 2
-          - label: "3"
-            value: 3
-          - label: "4"
-            value: 4
-          - label: "5"
-            value: 5
-          - label: "6"
-            value: 6
-          - label: "7"
-            value: 7
-          - label: "8"
-            value: 8
-          - label: "9"
-            value: 9
-          - label: "10"
-            value: 10
-        contributes_to:
-          x: 0.25
-          y: 0.0
-          size: 0.0
-
-      - id: c2_risque_sanitaire_securite
-        label: "C2 - Risque sanitaire / securite"
-        type: dropdown
-        required: true
-        options:
-          - label: "0"
-            value: 0
-          - label: "1"
-            value: 1
-          - label: "2"
-            value: 2
-          - label: "3"
-            value: 3
-          - label: "4"
-            value: 4
-          - label: "5"
-            value: 5
-          - label: "6"
-            value: 6
-          - label: "7"
-            value: 7
-          - label: "8"
-            value: 8
-          - label: "9"
-            value: 9
-          - label: "10"
-            value: 10
-        contributes_to:
-          x: 0.25
-          y: 0.0
-          size: 0.0
-
-      - id: c3_exposition_incident
-        label: "C3 - Exposition en cas d'incident"
-        type: dropdown
-        required: true
-        options:
-          - label: "0"
-            value: 0
-          - label: "1"
-            value: 1
-          - label: "2"
-            value: 2
-          - label: "3"
-            value: 3
-          - label: "4"
-            value: 4
-          - label: "5"
-            value: 5
-          - label: "6"
-            value: 6
-          - label: "7"
-            value: 7
-          - label: "8"
-            value: 8
-          - label: "9"
-            value: 9
-          - label: "10"
-            value: 10
-        contributes_to:
-          x: 0.25
-          y: 0.0
-          size: 0.0
-
-      - id: c4_risque_operationnel_continuite
-        label: "C4 - Risque operationnel / continuite"
-        type: dropdown
-        required: true
-        options:
-          - label: "0"
-            value: 0
-          - label: "1"
-            value: 1
-          - label: "2"
-            value: 2
-          - label: "3"
-            value: 3
-          - label: "4"
-            value: 4
-          - label: "5"
-            value: 5
-          - label: "6"
-            value: 6
-          - label: "7"
-            value: 7
-          - label: "8"
-            value: 8
-          - label: "9"
-            value: 9
-          - label: "10"
-            value: 10
-        contributes_to:
-          x: 0.25
-          y: 0.0
-          size: 0.0
-
-  - id: valeur_strategique
-    label: Valeur strategique generee
-    questions:
-      - id: v1_differenciation_premium
-        label: "V1 - Differenciation et premium"
-        type: dropdown
-        required: true
-        options:
-          - label: "0"
-            value: 0
-          - label: "1"
-            value: 1
-          - label: "2"
-            value: 2
-          - label: "3"
-            value: 3
-          - label: "4"
-            value: 4
-          - label: "5"
-            value: 5
-          - label: "6"
-            value: 6
-          - label: "7"
-            value: 7
-          - label: "8"
-            value: 8
-          - label: "9"
-            value: 9
-          - label: "10"
-            value: 10
-        contributes_to:
-          x: 0.0
-          y: 0.25
-          size: 0.0
-
-      - id: v2_confiance_engagement_client
-        label: "V2 - Confiance et engagement client"
-        type: dropdown
-        required: true
-        options:
-          - label: "0"
-            value: 0
-          - label: "1"
-            value: 1
-          - label: "2"
-            value: 2
-          - label: "3"
-            value: 3
-          - label: "4"
-            value: 4
-          - label: "5"
-            value: 5
-          - label: "6"
-            value: 6
-          - label: "7"
-            value: 7
-          - label: "8"
-            value: 8
-          - label: "9"
-            value: 9
-          - label: "10"
-            value: 10
-        contributes_to:
-          x: 0.0
-          y: 0.25
-          size: 0.0
-
-      - id: v3_resilience_proactive
-        label: "V3 - Resilience proactive"
-        type: dropdown
-        required: true
-        options:
-          - label: "0"
-            value: 0
-          - label: "1"
-            value: 1
-          - label: "2"
-            value: 2
-          - label: "3"
-            value: 3
-          - label: "4"
-            value: 4
-          - label: "5"
-            value: 5
-          - label: "6"
-            value: 6
-          - label: "7"
-            value: 7
-          - label: "8"
-            value: 8
-          - label: "9"
-            value: 9
-          - label: "10"
-            value: 10
-        contributes_to:
-          x: 0.0
-          y: 0.25
-          size: 0.0
-
-      - id: v4_nouveaux_modeles_affaires
-        label: "V4 - Nouveaux modeles d'affaires"
-        type: dropdown
-        required: true
-        options:
-          - label: "0"
-            value: 0
-          - label: "1"
-            value: 1
-          - label: "2"
-            value: 2
-          - label: "3"
-            value: 3
-          - label: "4"
-            value: 4
-          - label: "5"
-            value: 5
-          - label: "6"
-            value: 6
-          - label: "7"
-            value: 7
-          - label: "8"
-            value: 8
-          - label: "9"
-            value: 9
-          - label: "10"
-            value: 10
-        contributes_to:
-          x: 0.0
-          y: 0.25
-          size: 0.0
+- id: criticite
+  label: Criticite
+  questions:
+  - id: c1_obligation_reglementaire_contractuelle
+    label: C1 - Obligation reglementaire et contractuelle
+    description: A quel point tracer cette famille est-il un devoir, impose par la loi ou par un client ?
+    type: dropdown
+    required: true
+    options:
+    - label: 'Aucune obligation : ni reglementation specifique, ni exigence client'
+      description: 'Aucune obligation : ni reglementation specifique, ni exigence
+        client'
+      value: 1
+    - label: 'Obligation diffuse : attentes generales (RSE, reporting volontaire)
+        sans exigence contraignante verifiee'
+      description: 'Obligation diffuse : attentes generales (RSE, reporting volontaire)
+        sans exigence contraignante verifiee'
+      value: 4
+    - label: 'Obligation claire : reglementation sectorielle applicable ou exigence
+        contractuelle d''un client pesant une part notable du chiffre d''affaires'
+      description: 'Obligation claire : reglementation sectorielle applicable ou exigence
+        contractuelle d''un client pesant une part notable du chiffre d''affaires'
+      value: 7
+    - label: 'Obligation imperative : tracabilite legalement exigee ou condition contractuelle
+        d''acces au marche'
+      description: 'Obligation imperative : tracabilite legalement exigee ou condition
+        contractuelle d''acces au marche'
+      value: 10
+    contributes_to:
+      x: 0.25
+      y: 0.0
+      size: 0.0
+  - id: c2_risque_sanitaire_securite
+    label: C2 - Risque sanitaire / securite
+    description: Quelle serait la gravite du prejudice aux personnes si un lot defectueux ne pouvait etre identifie et retire a temps ?
+    type: dropdown
+    required: true
+    options:
+    - label: 'Negligeable : le produit ne presente aucun danger d''usage'
+      description: 'Negligeable : le produit ne presente aucun danger d''usage'
+      value: 1
+    - label: 'Limite : inconfort ou dommage materiel mineur, sans atteinte aux personnes'
+      description: 'Limite : inconfort ou dommage materiel mineur, sans atteinte aux
+        personnes'
+      value: 4
+    - label: 'Serieux : atteinte possible a la sante ou a la securite'
+      description: 'Serieux : atteinte possible a la sante ou a la securite'
+      value: 7
+    - label: 'Vital : mise en danger de la vie'
+      description: 'Vital : mise en danger de la vie'
+      value: 10
+    contributes_to:
+      x: 0.25
+      y: 0.0
+      size: 0.0
+  - id: c3_exposition_incident
+    label: C3 - Exposition en cas d'incident
+    description: Que couterait a l'entreprise un incident non maitrise en probabilite et en ampleur ?
+    type: dropdown
+    required: true
+    options:
+    - label: 'Minime : incident improbable, consequences confinees, aucune visibilite
+        publique'
+      description: 'Minime : incident improbable, consequences confinees, aucune visibilite
+        publique'
+      value: 1
+    - label: 'Moderee : rappel limite possible, echo mediatique faible, marque peu
+        exposee au grand public'
+      description: 'Moderee : rappel limite possible, echo mediatique faible, marque
+        peu exposee au grand public'
+      value: 4
+    - label: 'Forte : rappel massif ou sanction plausible, marque connue, couverture
+        mediatique probable'
+      description: 'Forte : rappel massif ou sanction plausible, marque connue, couverture
+        mediatique probable'
+      value: 7
+    - label: 'Maximale : marque grand public tres visible, sujet sensible, reputation
+        durablement exposee'
+      description: 'Maximale : marque grand public tres visible, sujet sensible, reputation
+        durablement exposee'
+      value: 10
+    contributes_to:
+      x: 0.25
+      y: 0.0
+      size: 0.0
+  - id: c4_risque_operationnel_continuite
+    label: C4 - Risque operationnel / continuite
+    description: L'incapacite a localiser un produit dans la chaine peut-elle interrompre l'activite ?
+    type: dropdown
+    required: true
+    options:
+    - label: 'Chaine courte et transparente : fournisseurs directs connus, substitution
+        facile'
+      description: 'Chaine courte et transparente : fournisseurs directs connus, substitution
+        facile'
+      value: 1
+    - label: 'Chaine maitrisee : quelques rangs, visibilite correcte, interruption
+        improbable'
+      description: 'Chaine maitrisee : quelques rangs, visibilite correcte, interruption
+        improbable'
+      value: 4
+    - label: 'Chaine complexe : rangs multiples, sous-traitants peu visibles, defaut
+        non localisable ralentissant la production'
+      description: 'Chaine complexe : rangs multiples, sous-traitants peu visibles,
+        defaut non localisable ralentissant la production'
+      value: 7
+    - label: 'Chaine longue et opaque : dependance a des rangs profonds non transparents,
+        defaut pouvant arreter la production'
+      description: 'Chaine longue et opaque : dependance a des rangs profonds non
+        transparents, defaut pouvant arreter la production'
+      value: 10
+    contributes_to:
+      x: 0.25
+      y: 0.0
+      size: 0.0
+- id: valeur_strategique
+  label: Valeur
+  questions:
+  - id: v1_differenciation_premium
+    label: V1 - Differenciation et premium
+    description: La tracabilite de cette famille peut-elle justifier un prix ou un positionnement superieur ?
+    type: dropdown
+    required: true
+    options:
+    - label: 'Produit banalise : personne ne paie pour la provenance, la concurrence
+        se joue sur le prix'
+      description: 'Produit banalise : personne ne paie pour la provenance, la concurrence
+        se joue sur le prix'
+      value: 1
+    - label: 'Modere : la provenance est appreciee mais ne modifie ni le prix ni le
+        choix d''achat'
+      description: 'Modere : la provenance est appreciee mais ne modifie ni le prix
+        ni le choix d''achat'
+      value: 4
+    - label: 'Argument de vente : la tracabilite soutient le positionnement'
+      description: 'Argument de vente : la tracabilite soutient le positionnement'
+      value: 7
+    - label: 'Element central : la provenance porte le premium et fonde l''identite
+        du produit'
+      description: 'Element central : la provenance porte le premium et fonde l''identite
+        du produit'
+      value: 10
+    contributes_to:
+      x: 0.0
+      y: 0.25
+      size: 0.0
+  - id: v2_confiance_engagement_client
+    label: V2 - Confiance et engagement client
+    description: La transparence renforce-t-elle la relation avec le client, comme la fidelite, le rachat ou la recommandation ?
+    type: dropdown
+    required: true
+    options:
+    - label: 'Clientele indifferente : l''achat se decide sur le prix ou la disponibilite'
+      description: 'Clientele indifferente : l''achat se decide sur le prix ou la
+        disponibilite'
+      value: 1
+    - label: 'Clientele attentive : la transparence est un plus apprecie, sans effet
+        observable sur la fidelite'
+      description: 'Clientele attentive : la transparence est un plus apprecie, sans
+        effet observable sur la fidelite'
+      value: 4
+    - label: 'Clientele sensible : la transparence nourrit la confiance et le rachat'
+      description: 'Clientele sensible : la transparence nourrit la confiance et le
+        rachat'
+      value: 7
+    - label: 'Clientele exigeante : la preuve de provenance conditionne l''achat et
+        cree un attachement durable'
+      description: 'Clientele exigeante : la preuve de provenance conditionne l''achat
+        et cree un attachement durable'
+      value: 10
+    contributes_to:
+      x: 0.0
+      y: 0.25
+      size: 0.0
+  - id: v3_resilience_proactive
+    label: V3 - Resilience proactive
+    description: La visibilite de la chaine permet-elle d'anticiper les ruptures et d'en faire un avantage concurrentiel ?
+    type: dropdown
+    required: true
+    options:
+    - label: 'Aucun gain : approvisionnement simple, substituts abondants, rien a
+        anticiper'
+      description: 'Aucun gain : approvisionnement simple, substituts abondants, rien
+        a anticiper'
+      value: 1
+    - label: 'Anticipation limitee : la visibilite aide ponctuellement, sans distinction
+        concurrentielle'
+      description: 'Anticipation limitee : la visibilite aide ponctuellement, sans
+        distinction concurrentielle'
+      value: 4
+    - label: 'Avantage net : detecter les tensions amont avant les concurrents securise
+        l''approvisionnement'
+      description: 'Avantage net : detecter les tensions amont avant les concurrents
+        securise l''approvisionnement'
+      value: 7
+    - label: 'Robustesse differenciante : la visibilite bout-en-bout permet de tenir
+        quand les concurrents subissent'
+      description: 'Robustesse differenciante : la visibilite bout-en-bout permet
+        de tenir quand les concurrents subissent'
+      value: 10
+    contributes_to:
+      x: 0.0
+      y: 0.25
+      size: 0.0
+  - id: v4_nouveaux_modeles_affaires
+    label: V4 - Nouveaux modeles d'affaires
+    description: La donnee de tracabilite peut-elle ouvrir des relais de croissance, d'usage, de circularite ou de seconde vie ?
+    type: dropdown
+    required: true
+    options:
+    - label: 'Aucun : la donnee n''a pas d''usage au-dela du suivi'
+      description: 'Aucun : la donnee n''a pas d''usage au-dela du suivi'
+      value: 1
+    - label: 'Potentiel diffus : des usages sont imaginables, aucun n''est etudie
+        concretement'
+      description: 'Potentiel diffus : des usages sont imaginables, aucun n''est etudie
+        concretement'
+      value: 4
+    - label: 'Piste engagee : un modele est a l''etude ou emerge dans le secteur avec
+        des cas operationnels'
+      description: 'Piste engagee : un modele est a l''etude ou emerge dans le secteur
+        avec des cas operationnels'
+      value: 7
+    - label: 'Relais de croissance avere : un modele fonde sur la donnee de tracabilite
+        est operationnel ou impose'
+      description: 'Relais de croissance avere : un modele fonde sur la donnee de
+        tracabilite est operationnel ou impose'
+      value: 10
+    contributes_to:
+      x: 0.0
+      y: 0.25
+      size: 0.0
+- id: couts
+  label: Couts
+  questions: []
+scenarios:
+- id: balanced
+  label: Scenario 1 - Balanced
+  description: Balanced weighting across criticite and valeur questions.
+  weights:
+    c1_obligation_reglementaire_contractuelle:
+      x: 1.0
+    c2_risque_sanitaire_securite:
+      x: 1.0
+    c3_exposition_incident:
+      x: 1.0
+    c4_risque_operationnel_continuite:
+      x: 1.0
+    v1_differenciation_premium:
+      y: 1.0
+    v2_confiance_engagement_client:
+      y: 1.0
+    v3_resilience_proactive:
+      y: 1.0
+    v4_nouveaux_modeles_affaires:
+      y: 1.0
+- id: regulatory_pressure
+  label: Scenario 2 - Regulatory pressure
+  description: Gives more importance to regulatory, safety, and incident exposure.
+  weights:
+    c1_obligation_reglementaire_contractuelle:
+      x: 1.4
+    c2_risque_sanitaire_securite:
+      x: 1.3
+    c3_exposition_incident:
+      x: 1.2
+    c4_risque_operationnel_continuite:
+      x: 0.8
+    v1_differenciation_premium:
+      y: 0.8
+    v2_confiance_engagement_client:
+      y: 1.0
+    v3_resilience_proactive:
+      y: 0.9
+    v4_nouveaux_modeles_affaires:
+      y: 0.8
+- id: market_value
+  label: Scenario 3 - Market value
+  description: Gives more importance to differentiation, customer trust, and growth models.
+  weights:
+    c1_obligation_reglementaire_contractuelle:
+      x: 0.8
+    c2_risque_sanitaire_securite:
+      x: 0.9
+    c3_exposition_incident:
+      x: 1.0
+    c4_risque_operationnel_continuite:
+      x: 0.8
+    v1_differenciation_premium:
+      y: 1.4
+    v2_confiance_engagement_client:
+      y: 1.3
+    v3_resilience_proactive:
+      y: 0.9
+    v4_nouveaux_modeles_affaires:
+      y: 1.4
+- id: operational_resilience
+  label: Scenario 4 - Operational resilience
+  description: Gives more importance to operational continuity and proactive resilience.
+  weights:
+    c1_obligation_reglementaire_contractuelle:
+      x: 0.9
+    c2_risque_sanitaire_securite:
+      x: 1.0
+    c3_exposition_incident:
+      x: 1.1
+    c4_risque_operationnel_continuite:
+      x: 1.5
+    v1_differenciation_premium:
+      y: 0.8
+    v2_confiance_engagement_client:
+      y: 0.9
+    v3_resilience_proactive:
+      y: 1.5
+    v4_nouveaux_modeles_affaires:
+      y: 0.8
