@@ -1,88 +1,262 @@
 sections:
-  - id: supply_chain_criticality
-    label: Supply chain criticality
+  - id: criticite
+    label: Criticite
     questions:
-      - id: supplier_concentration
-        label: Supplier concentration
+      - id: c1_obligation_reglementaire_contractuelle
+        label: "C1 - Obligation reglementaire et contractuelle"
         type: dropdown
         required: true
         options:
-          - label: Low
+          - label: "0"
+            value: 0
+          - label: "1"
             value: 1
-          - label: Medium
+          - label: "2"
+            value: 2
+          - label: "3"
             value: 3
-          - label: High
+          - label: "4"
+            value: 4
+          - label: "5"
             value: 5
+          - label: "6"
+            value: 6
+          - label: "7"
+            value: 7
+          - label: "8"
+            value: 8
+          - label: "9"
+            value: 9
+          - label: "10"
+            value: 10
         contributes_to:
-          x: 0.4
+          x: 0.25
           y: 0.0
-          size: 0.2
-
-      - id: annual_spend
-        label: Annual spend
-        type: number
-        required: true
-        contributes_to:
-          x: 0.0
-          y: 0.0
-          size: 0.6
-
-      - id: replacement_difficulty
-        label: Replacement difficulty
-        type: dropdown
-        required: true
-        options:
-          - label: Easy
-            value: 1
-          - label: Moderate
-            value: 3
-          - label: Difficult
-            value: 5
-        contributes_to:
-          x: 0.3
-          y: 0.1
-          size: 0.2
-
-  - id: traceability_maturity
-    label: Traceability maturity
-    questions:
-      - id: supplier_data_quality
-        label: Supplier data quality
-        type: dropdown
-        required: true
-        options:
-          - label: Poor
-            value: 1
-          - label: Fair
-            value: 3
-          - label: Strong
-            value: 5
-        contributes_to:
-          x: 0.0
-          y: 0.4
           size: 0.0
 
-      - id: traceability_coverage_percent
-        label: Traceability coverage percent
-        type: number
+      - id: c2_risque_sanitaire_securite
+        label: "C2 - Risque sanitaire / securite"
+        type: dropdown
         required: true
+        options:
+          - label: "0"
+            value: 0
+          - label: "1"
+            value: 1
+          - label: "2"
+            value: 2
+          - label: "3"
+            value: 3
+          - label: "4"
+            value: 4
+          - label: "5"
+            value: 5
+          - label: "6"
+            value: 6
+          - label: "7"
+            value: 7
+          - label: "8"
+            value: 8
+          - label: "9"
+            value: 9
+          - label: "10"
+            value: 10
         contributes_to:
-          x: 0.0
-          y: 0.4
+          x: 0.25
+          y: 0.0
           size: 0.0
 
-      - id: audit_frequency
-        label: Audit frequency
+      - id: c3_exposition_incident
+        label: "C3 - Exposition en cas d'incident"
         type: dropdown
-        required: false
+        required: true
         options:
-          - label: Rarely
+          - label: "0"
+            value: 0
+          - label: "1"
             value: 1
-          - label: Annually
+          - label: "2"
+            value: 2
+          - label: "3"
             value: 3
-          - label: Quarterly or better
+          - label: "4"
+            value: 4
+          - label: "5"
             value: 5
+          - label: "6"
+            value: 6
+          - label: "7"
+            value: 7
+          - label: "8"
+            value: 8
+          - label: "9"
+            value: 9
+          - label: "10"
+            value: 10
+        contributes_to:
+          x: 0.25
+          y: 0.0
+          size: 0.0
+
+      - id: c4_risque_operationnel_continuite
+        label: "C4 - Risque operationnel / continuite"
+        type: dropdown
+        required: true
+        options:
+          - label: "0"
+            value: 0
+          - label: "1"
+            value: 1
+          - label: "2"
+            value: 2
+          - label: "3"
+            value: 3
+          - label: "4"
+            value: 4
+          - label: "5"
+            value: 5
+          - label: "6"
+            value: 6
+          - label: "7"
+            value: 7
+          - label: "8"
+            value: 8
+          - label: "9"
+            value: 9
+          - label: "10"
+            value: 10
+        contributes_to:
+          x: 0.25
+          y: 0.0
+          size: 0.0
+
+  - id: valeur_strategique
+    label: Valeur strategique generee
+    questions:
+      - id: v1_differenciation_premium
+        label: "V1 - Differenciation et premium"
+        type: dropdown
+        required: true
+        options:
+          - label: "0"
+            value: 0
+          - label: "1"
+            value: 1
+          - label: "2"
+            value: 2
+          - label: "3"
+            value: 3
+          - label: "4"
+            value: 4
+          - label: "5"
+            value: 5
+          - label: "6"
+            value: 6
+          - label: "7"
+            value: 7
+          - label: "8"
+            value: 8
+          - label: "9"
+            value: 9
+          - label: "10"
+            value: 10
         contributes_to:
           x: 0.0
-          y: 0.2
+          y: 0.25
+          size: 0.0
+
+      - id: v2_confiance_engagement_client
+        label: "V2 - Confiance et engagement client"
+        type: dropdown
+        required: true
+        options:
+          - label: "0"
+            value: 0
+          - label: "1"
+            value: 1
+          - label: "2"
+            value: 2
+          - label: "3"
+            value: 3
+          - label: "4"
+            value: 4
+          - label: "5"
+            value: 5
+          - label: "6"
+            value: 6
+          - label: "7"
+            value: 7
+          - label: "8"
+            value: 8
+          - label: "9"
+            value: 9
+          - label: "10"
+            value: 10
+        contributes_to:
+          x: 0.0
+          y: 0.25
+          size: 0.0
+
+      - id: v3_resilience_proactive
+        label: "V3 - Resilience proactive"
+        type: dropdown
+        required: true
+        options:
+          - label: "0"
+            value: 0
+          - label: "1"
+            value: 1
+          - label: "2"
+            value: 2
+          - label: "3"
+            value: 3
+          - label: "4"
+            value: 4
+          - label: "5"
+            value: 5
+          - label: "6"
+            value: 6
+          - label: "7"
+            value: 7
+          - label: "8"
+            value: 8
+          - label: "9"
+            value: 9
+          - label: "10"
+            value: 10
+        contributes_to:
+          x: 0.0
+          y: 0.25
+          size: 0.0
+
+      - id: v4_nouveaux_modeles_affaires
+        label: "V4 - Nouveaux modeles d'affaires"
+        type: dropdown
+        required: true
+        options:
+          - label: "0"
+            value: 0
+          - label: "1"
+            value: 1
+          - label: "2"
+            value: 2
+          - label: "3"
+            value: 3
+          - label: "4"
+            value: 4
+          - label: "5"
+            value: 5
+          - label: "6"
+            value: 6
+          - label: "7"
+            value: 7
+          - label: "8"
+            value: 8
+          - label: "9"
+            value: 9
+          - label: "10"
+            value: 10
+        contributes_to:
+          x: 0.0
+          y: 0.25
           size: 0.0

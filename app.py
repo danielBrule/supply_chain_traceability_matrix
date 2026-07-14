@@ -21,8 +21,29 @@ def apply_sidebar_styles() -> None:
     st.markdown(
         """
         <style>
+        html, body, [class*="css"] {
+            font-size: 17px;
+        }
+
+        .stMarkdown, .stCaption, label, [data-testid="stWidgetLabel"] {
+            font-size: 1rem;
+        }
+
+        div[data-baseweb="select"] {
+            font-size: 1rem;
+        }
+
         section[data-testid="stSidebar"] [data-testid="stButton"] button {
+            font-size: 1rem;
             min-height: 2.35rem;
+        }
+
+        section[data-testid="stSidebar"] h3 {
+            font-size: 1.1rem;
+        }
+
+        button {
+            font-size: 1rem;
         }
 
         .status-dot {
