@@ -42,7 +42,6 @@ Expected controls:
 - Clear save behavior or auto-save
 - Last updated timestamp per category
 - Validation warnings for missing required answers
-- Export to CSV or Excel
 - A small admin/config area for categories and questions
 - A way to show the bubble chart from the sidebar
 
