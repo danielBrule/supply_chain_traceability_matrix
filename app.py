@@ -1,5 +1,3 @@
-import html
-
 import pandas as pd
 import plotly.express as px
 import streamlit as st
@@ -7,16 +5,13 @@ import streamlit as st
 from src.db import (
     create_category,
     delete_all_categories,
-    deactivate_category,
     get_active_categories,
     get_answers,
     get_inactive_categories,
     init_db,
     reactivate_category,
-    save_answer,
     save_setting,
     get_setting,
-    update_category,
 )
 from src.scoring import (
     calculate_completion,
@@ -126,15 +121,6 @@ def total_answer_count(answers: dict, questions: dict) -> tuple[int, int]:
         if answers.get(question["id"]) is not None and answers.get(question["id"]) != ""
     )
     return answered, len(all_questions)
-
-
-def completion_label(completion: str, answered: int, required: int) -> str:
-    labels = {
-        "complete": "Complétée",
-        "partial": "Partielle",
-        "not_started": "Non commencee",
-    }
-    return f"{labels[completion]} - {answered} / {required} reponses requises completees"
 
 
 def category_sidebar_label(category: dict, questions: dict) -> str:
@@ -254,104 +240,6 @@ def render_tools_sidebar() -> None:
         ):
             st.session_state.page = "Categories admin"
             st.rerun()
-
-
-def render_assessment_page(
-    selected_category_id: int | None,
-    categories: list[dict],
-    questions: dict,
-) -> None:
-    if selected_category_id is None:
-        st.header("Evaluation")
-        st.info("Ajoutez une famille de produit avant de commencer une evaluation.")
-        return
-
-    category_by_id = {category["id"]: category for category in categories}
-    selected_category = category_by_id[selected_category_id]
-    answers = get_answers(selected_category["id"])
-    completion = calculate_completion(answers, questions)
-    answered, required = required_answer_count(answers, questions)
-
-    st.title(selected_category["name"])
-    if selected_category["description"]:
-        st.write(selected_category["description"])
-    st.caption(completion_label(completion, answered, required))
-
-    with st.form(f"assessment_{selected_category['id']}"):
-        tabs = st.tabs([section["label"] for section in questions["sections"]])
-        pending_answers = {}
-
-        for tab, section in zip(tabs, questions["sections"]):
-            with tab:
-                for question in section["questions"]:
-                    question_id = question["id"]
-                    render_question_prompt(question)
-
-                    saved_value = answers.get(question_id)
-                    key = f"answer_{selected_category['id']}_{question_id}"
-
-                    if question["type"] == "dropdown":
-                        pending_answers[question_id] = render_dropdown_question(
-                            question["options"],
-                            saved_value,
-                            key,
-                        )
-                    elif question["type"] == "number":
-                        pending_answers[question_id] = st.number_input(
-                            "Reponse",
-                            value=number_value(saved_value),
-                            step=1.0,
-                            key=key,
-                            label_visibility="collapsed",
-                        )
-                    else:
-                        st.warning(f"Type de question non supporte : {question['type']}")
-
-        submitted = st.form_submit_button("Sauvegarder")
-        if submitted:
-            for question_id, value in pending_answers.items():
-                save_answer(
-                    selected_category["id"],
-                    question_id,
-                    "" if value is None else value,
-                )
-            st.success(f"Evaluation sauvegardee pour {selected_category['name']}.")
-            st.rerun()
-
-    st.divider()
-    edit_key = f"edit_selected_category_{selected_category['id']}"
-    edit_col, delete_col = st.columns([0.22, 0.78])
-    if edit_col.button("Modifier la famille de produit", key=f"toggle_{edit_key}"):
-        st.session_state[edit_key] = not st.session_state.get(edit_key, False)
-
-    if delete_col.button(
-        "Desactiver la famille de produit",
-        key=f"deactivate_selected_category_{selected_category['id']}",
-    ):
-        deactivate_category(selected_category["id"])
-        st.session_state.pop("selected_category_id", None)
-        st.rerun()
-
-    if st.session_state.get(edit_key, False):
-        with st.form(f"selected_category_details_{selected_category['id']}"):
-            updated_name = st.text_input("Nom de la famille de produit", value=selected_category["name"])
-            updated_description = st.text_area(
-                "Description de la famille de produit",
-                value=selected_category["description"],
-                height=90,
-            )
-            if st.form_submit_button("Enregistrer la famille de produit"):
-                if not updated_name.strip():
-                    st.warning("Le nom de la famille de produit est obligatoire.")
-                else:
-                    update_category(
-                        selected_category["id"],
-                        updated_name,
-                        updated_description,
-                    )
-                    st.session_state[edit_key] = False
-                    st.success("Famille de produit mise a jour.")
-                    st.rerun()
 
 
 def build_chart_rows(
@@ -739,49 +627,6 @@ def render_bubble_size_legend(questions: dict) -> None:
         width="stretch",
         hide_index=True,
     )
-
-
-def render_dropdown_question(
-    options: list[dict],
-    saved_value: object,
-    key: str,
-) -> object:
-    choices = [{"label": "Non renseigne", "value": None}, *options]
-    values = [choice["value"] for choice in choices]
-    selected_index = values.index(saved_value) if saved_value in values else 0
-    selected = st.selectbox(
-        "Reponse",
-        choices,
-        index=selected_index,
-        format_func=option_display_text,
-        key=key,
-        label_visibility="collapsed",
-    )
-    return selected["value"]
-
-
-def render_question_prompt(question: dict) -> None:
-    required_marker = " *" if question.get("required", False) else ""
-    label = html.escape(f"{question['label']}{required_marker}")
-    description = question.get("description", "")
-
-    if description:
-        st.markdown(
-            f"<strong>{label}</strong><br><em>{html.escape(description)}</em>",
-            unsafe_allow_html=True,
-        )
-    else:
-        st.markdown(f"<strong>{label}</strong>", unsafe_allow_html=True)
-
-
-def option_display_text(option: dict) -> str:
-    return option.get("description") or option["label"]
-
-
-def number_value(value: object) -> float | None:
-    if value is None or value == "":
-        return None
-    return float(value)
 
 
 st.set_page_config(

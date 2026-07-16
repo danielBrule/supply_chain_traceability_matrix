@@ -1,5 +1,7 @@
 # Supply Chain Traceability Matrix
 
+[![CI](https://github.com/danielBrule/supply_chain_traceability_matrix/actions/workflows/ci.yml/badge.svg)](https://github.com/danielBrule/supply_chain_traceability_matrix/actions/workflows/ci.yml)
+
 A local Streamlit application for assessing product categories and plotting their
 criticality, strategic value, and implementation cost on a bubble matrix.
 
