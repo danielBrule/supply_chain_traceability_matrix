@@ -175,6 +175,10 @@ def save_answer(category_id: int, question_id: str, value: Any) -> None:
             """,
             (category_id, question_id, _serialize_value(value), now),
         )
+        conn.execute(
+            "UPDATE categories SET updated_at = ? WHERE id = ?",
+            (now, category_id),
+        )
 
 
 def get_setting(key: str, default: Any = None) -> Any:

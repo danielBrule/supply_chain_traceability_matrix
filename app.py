@@ -26,6 +26,7 @@ from src.scoring import (
     get_scenarios,
     load_questions,
 )
+from src.assessment_page import render_assessment_page as render_assessment_module
 
 
 def apply_sidebar_styles() -> None:
@@ -802,7 +803,7 @@ render_tools_sidebar()
 page = st.session_state.page
 
 if page == "Assessment":
-    render_assessment_page(selected_category_id, get_active_categories(), questions)
+    render_assessment_module(selected_category_id, get_active_categories(), questions)
 elif page == "Matrix / Bubble chart":
     render_chart_page(get_active_categories(), questions)
 elif page == "Categories admin":
