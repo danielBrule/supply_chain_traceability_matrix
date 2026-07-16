@@ -1,4 +1,4 @@
-.PHONY: setup venv install py_compile run init-db activate clean
+.PHONY: setup venv install py_compile test run init-db activate clean
 
 VENV := .venv
 PYTHON := py
@@ -14,7 +14,10 @@ install: venv
 	"$(VENV_PYTHON)" -m pip install -r requirements.txt
 
 py_compile: venv
-	"$(VENV_PYTHON)" -m py_compile app.py src/__init__.py src/db.py src/scoring.py
+	"$(VENV_PYTHON)" -m compileall -q app.py src tests
+
+test: py_compile
+	"$(VENV_PYTHON)" -m unittest discover -s tests -v
 
 run: py_compile
 	"$(VENV_PYTHON)" -m streamlit run app.py
